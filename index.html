@@ -223,7 +223,7 @@
         .type-daily { background: #e0f2fe; color: #0369a1; }
         .type-special { background: #f3e8ff; color: #6b21a8; }
         .designation-badge { background: #f1f5f9; color: var(--text-muted); border: 1px solid var(--border); }
-        .permission-badge { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; } /* New Badge for Permission */
+        .permission-badge { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
 
         .task-meta {
             font-size: 13px; color: var(--text-muted); background: #f1f5f9;
@@ -303,7 +303,6 @@
         
         <!-- LOGIN SECTION -->
         <div id="section-login" class="app-section active">
-            <!-- (Login Code Same as Before) -->
             <div class="card login-box" id="login-form-box">
                 <div class="card-title" style="justify-content: center; font-size: 20px; flex-direction: column; text-align: center;">
                     <strong>🔐 Secure Login</strong>
@@ -499,7 +498,34 @@
 
             <!-- Manager Attendance View -->
             <div id="manager-attendance-view" style="display: none;">
-                <!-- Attendance Code unchanged -->
+                
+                <!-- NEW CARD: Monthly Payroll Report -->
+                <div class="card" style="border-top: 4px solid var(--success); margin-bottom: 20px;">
+                    <div class="card-title" style="flex-direction: column; align-items: flex-start;">
+                        <strong>📅 Monthly Attendance & Payroll Report</strong>
+                        <span style="font-size:13px; font-weight:normal; color:var(--text-muted);">महीने की कुल हाज़िरी और पेरोल (वेतन) रिपोर्ट</span>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
+                        <input type="month" id="payroll-month" class="form-control" style="max-width: 200px; margin-top: 0;">
+                        <button class="btn btn-success" style="width: auto; padding: 10px 20px;" onclick="generatePayroll()">📊 Generate Report / रिपोर्ट बनाएं</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="metrics-table">
+                            <thead>
+                                <tr>
+                                    <th>Staff Name / स्टाफ का नाम</th>
+                                    <th>Total Days Present / कुल उपस्थित दिन</th>
+                                    <th>Total Work Hours / कुल ड्यूटी घंटे</th>
+                                </tr>
+                            </thead>
+                            <tbody id="payroll-report-tbody">
+                                <tr><td colspan="3" class="empty-state">Select a month and click Generate Report. / महीना चुनें और रिपोर्ट बनाएं पर क्लिक करें।</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Daily Attendance Tracker -->
                 <div class="card">
                     <div class="card-title" style="flex-direction: column; align-items: flex-start;">
                         <strong id="manager-attendance-date-title">⏰ Today's Staff Attendance Tracker</strong>
@@ -525,7 +551,6 @@
 
             <!-- Manager Daily View -->
             <div id="manager-daily-view" style="display: none;">
-                <!-- Daily Code unchanged -->
                 <div class="grid-layout">
                     <div>
                         <div class="card">
@@ -601,7 +626,7 @@
                                     <div class="lang-hi">पासवर्ड सेट करें</div>
                                     <input type="text" id="stf-pass" class="form-control" placeholder="Password" required>
                                 </div>
-                                <!-- NEW CHECKBOX FOR TASK PERMISSION -->
+                                <!-- CHECKBOX FOR TASK PERMISSION -->
                                 <div class="form-group" style="display:flex; align-items:center; gap:10px; padding: 10px; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px;">
                                     <input type="checkbox" id="stf-can-assign" style="width:22px; height:22px; cursor:pointer;">
                                     <div>
@@ -641,7 +666,7 @@
                     </div>
             </div>
 
-            <!-- NEW CARD FOR AUTHORIZED STAFF TO ASSIGN TASKS -->
+            <!-- CARD FOR AUTHORIZED STAFF TO ASSIGN TASKS -->
             <div class="card" id="staff-assign-task-card" style="display:none; border-top: 4px solid var(--warning); background:#fffbeb;">
                 <div class="card-title" style="flex-direction: column; align-items: flex-start; color:#92400e; border-bottom-color:#fef3c7;">
                     <strong>📝 Assign Task to Others</strong>
@@ -798,12 +823,11 @@
             } else {
                 renderStaffTasks();
                 renderStaffAttendanceWidget();
-                renderStaffAssignForm(); // Show/hide assign form based on permission
+                renderStaffAssignForm(); 
                 updateNotifications();
             }
         }
 
-        // --- Render Staff Task Assignment Form (If Authorized) ---
         function renderStaffAssignForm() {
             const assignCard = document.getElementById('staff-assign-task-card');
             const assigneeSelect = document.getElementById('stf-t-assignee');
@@ -812,13 +836,11 @@
                 assignCard.style.display = 'block';
                 assigneeSelect.innerHTML = '<option value="" disabled selected>👉 स्टाफ चुनें (Select Staff)</option>';
                 
-                // Show all staff except themselves
                 const otherStaff = usersDB.filter(u => u.role === 'staff' && u.id !== currentUser.id);
                 otherStaff.forEach(s => {
                     assigneeSelect.innerHTML += `<option value="${s.id}">${s.name} (${s.designation || 'Staff'})</option>`;
                 });
 
-                // Default date logic for staff form
                 const tomorrow = new Date();
                 tomorrow.setDate(tomorrow.getDate() + 1);
                 tomorrow.setMinutes(tomorrow.getMinutes() - tomorrow.getTimezoneOffset());
@@ -830,7 +852,6 @@
             }
         }
 
-        // --- Handle Task Creation by Staff ---
         function handleStaffDelegatingTask() {
             const title = document.getElementById('stf-t-title').value.trim();
             const desc = document.getElementById('stf-t-desc').value.trim();
@@ -1034,6 +1055,15 @@
                 document.getElementById('tab-attendance').classList.add('active');
                 document.getElementById('manager-attendance-view').style.display = 'block';
                 renderManagerAttendance();
+                
+                // Auto-set current month in Payroll input
+                const payrollInput = document.getElementById('payroll-month');
+                if(payrollInput && !payrollInput.value) {
+                    const today = new Date();
+                    const year = today.getFullYear();
+                    const month = String(today.getMonth() + 1).padStart(2, '0');
+                    payrollInput.value = `${year}-${month}`;
+                }
             } else {
                 document.getElementById('tab-staff').classList.add('active');
                 document.getElementById('manager-staff-view').style.display = 'block';
@@ -1180,6 +1210,71 @@
             });
         }
 
+        // --- NEW: Generate Monthly Payroll Report ---
+        function generatePayroll() {
+            const monthInput = document.getElementById('payroll-month').value; 
+            const tbody = document.getElementById('payroll-report-tbody');
+
+            if (!monthInput) {
+                alert("❌ Please select a month first! (कृपया पहले एक महीना चुनें!)");
+                return;
+            }
+
+            tbody.innerHTML = '';
+            const staffMembers = usersDB.filter(u => u.role === 'staff');
+
+            if (staffMembers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" class="empty-state">No staff members found.</td></tr>`;
+                return;
+            }
+
+            let hasData = false;
+
+            staffMembers.forEach(staff => {
+                const monthRecords = attendanceDB.filter(a => a.staffId === staff.id && a.date.startsWith(monthInput));
+                const totalDays = monthRecords.length;
+                let totalMilliseconds = 0;
+
+                monthRecords.forEach(rec => {
+                    if (rec.punchIn && rec.punchOut) {
+                        const inTime = new Date(rec.punchIn);
+                        const outTime = new Date(rec.punchOut);
+                        totalMilliseconds += (outTime - inTime);
+                    }
+                });
+
+                const totalSecs = Math.floor(totalMilliseconds / 1000);
+                const totalMins = Math.floor(totalSecs / 60);
+                const hrs = Math.floor(totalMins / 60);
+                const mins = totalMins % 60;
+
+                if (totalDays > 0) {
+                    hasData = true;
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>
+                                <strong>👤 ${staff.name}</strong><br>
+                                <span style="font-size:11px;color:var(--primary-color); font-weight:bold;">${staff.designation || 'Staff'}</span>
+                            </td>
+                            <td><span class="status-present" style="font-size:13px;">${totalDays} Days / दिन</span></td>
+                            <td><span class="duration-display" style="background:#f1f5f9; border:1px solid #cbd5e1; color:#334155;">${hrs} hr ${mins} min</span></td>
+                        </tr>
+                    `;
+                } else {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>
+                                <strong>👤 ${staff.name}</strong><br>
+                                <span style="font-size:11px;color:var(--text-muted);">${staff.designation || 'Staff'}</span>
+                            </td>
+                            <td><span class="status-absent">0 Days (Absent)</span></td>
+                            <td><span style="color:var(--text-muted)">0 hr 0 min</span></td>
+                        </tr>
+                    `;
+                }
+            });
+        }
+
         function renderManagerAttendance() {
             const tbody = document.getElementById('manager-attendance-tbody');
             const titleDate = document.getElementById('manager-attendance-date-title');
@@ -1308,7 +1403,7 @@
                     usersDB[staffIdx].designation = designation;
                     usersDB[staffIdx].mobile = mobile;
                     usersDB[staffIdx].pass = pass;
-                    usersDB[staffIdx].canAssignTasks = canAssign; // Update Permission
+                    usersDB[staffIdx].canAssignTasks = canAssign; 
                     saveUsers();
                     
                     tasksDB.forEach(t => { if(t.assigneeId === editingStaffId) t.assigneeName = name; });
