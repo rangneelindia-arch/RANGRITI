@@ -223,6 +223,7 @@
         .type-daily { background: #e0f2fe; color: #0369a1; }
         .type-special { background: #f3e8ff; color: #6b21a8; }
         .designation-badge { background: #f1f5f9; color: var(--text-muted); border: 1px solid var(--border); }
+        .permission-badge { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; } /* New Badge for Permission */
 
         .task-meta {
             font-size: 13px; color: var(--text-muted); background: #f1f5f9;
@@ -300,8 +301,9 @@
 
     <div class="container">
         
+        <!-- LOGIN SECTION -->
         <div id="section-login" class="app-section active">
-            
+            <!-- (Login Code Same as Before) -->
             <div class="card login-box" id="login-form-box">
                 <div class="card-title" style="justify-content: center; font-size: 20px; flex-direction: column; text-align: center;">
                     <strong>🔐 Secure Login</strong>
@@ -327,6 +329,7 @@
                 </div>
             </div>
 
+            <!-- Register Form -->
             <div class="card login-box" id="register-box" style="display: none;">
                 <div class="card-title" style="justify-content: center; font-size: 20px; flex-direction: column; text-align: center;">
                     <strong>📝 Create New Account</strong>
@@ -360,6 +363,7 @@
                 </div>
             </div>
 
+            <!-- Forgot Password Form -->
             <div class="card login-box" id="forgot-password-box" style="display: none;">
                 <div class="card-title" style="justify-content: center; font-size: 20px; flex-direction: column; text-align: center;">
                     <strong>🔄 Reset Password</strong>
@@ -389,6 +393,7 @@
             </div>
         </div>
 
+        <!-- MANAGER SECTION -->
         <div id="section-manager" class="app-section">
             <div class="manager-tabs">
                 <button class="tab-btn active" id="tab-tasks" onclick="switchManagerTab('tasks')">
@@ -409,6 +414,7 @@
                 </button>
             </div>
 
+            <!-- Manager Tasks View -->
             <div id="manager-tasks-view">
                 <div class="grid-layout">
                     <div>
@@ -491,7 +497,9 @@
                 </div>
             </div>
 
+            <!-- Manager Attendance View -->
             <div id="manager-attendance-view" style="display: none;">
+                <!-- Attendance Code unchanged -->
                 <div class="card">
                     <div class="card-title" style="flex-direction: column; align-items: flex-start;">
                         <strong id="manager-attendance-date-title">⏰ Today's Staff Attendance Tracker</strong>
@@ -515,7 +523,9 @@
                 </div>
             </div>
 
+            <!-- Manager Daily View -->
             <div id="manager-daily-view" style="display: none;">
+                <!-- Daily Code unchanged -->
                 <div class="grid-layout">
                     <div>
                         <div class="card">
@@ -556,6 +566,7 @@
                 </div>
             </div>
 
+            <!-- Manager Staff View -->
             <div id="manager-staff-view" style="display: none;">
                 <div class="grid-layout">
                     <div>
@@ -590,6 +601,15 @@
                                     <div class="lang-hi">पासवर्ड सेट करें</div>
                                     <input type="text" id="stf-pass" class="form-control" placeholder="Password" required>
                                 </div>
+                                <!-- NEW CHECKBOX FOR TASK PERMISSION -->
+                                <div class="form-group" style="display:flex; align-items:center; gap:10px; padding: 10px; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px;">
+                                    <input type="checkbox" id="stf-can-assign" style="width:22px; height:22px; cursor:pointer;">
+                                    <div>
+                                        <label class="lang-en" style="margin-bottom:0; cursor:pointer; color:#92400e;" for="stf-can-assign">Give Task Assignment Permission</label>
+                                        <div class="lang-hi" style="margin-top:2px; color:#b45309;">इस स्टाफ को दूसरों को काम सौंपने का अधिकार दें</div>
+                                    </div>
+                                </div>
+                                
                                 <div style="display:flex; gap:10px;">
                                     <button type="submit" id="staff-submit-btn" class="btn btn-success">🔑 Save Account / सेव करें</button>
                                     <button type="button" id="staff-cancel-btn" class="btn btn-danger" style="display:none;" onclick="cancelEditStaff()">❌ Cancel / रद्द करें</button>
@@ -610,6 +630,7 @@
             </div>
         </div>
 
+        <!-- STAFF SECTION -->
         <div id="section-staff" class="app-section">
             <div class="welcome-text" id="staff-welcome">Welcome, Staff Member / नमस्ते, स्टाफ सदस्य</div>
             
@@ -618,6 +639,34 @@
                 <div class="time-display" id="live-time">00:00:00</div>
                 <div id="attendance-action-area" style="width: 100%; max-width: 320px; text-align: center;">
                     </div>
+            </div>
+
+            <!-- NEW CARD FOR AUTHORIZED STAFF TO ASSIGN TASKS -->
+            <div class="card" id="staff-assign-task-card" style="display:none; border-top: 4px solid var(--warning); background:#fffbeb;">
+                <div class="card-title" style="flex-direction: column; align-items: flex-start; color:#92400e; border-bottom-color:#fef3c7;">
+                    <strong>📝 Assign Task to Others</strong>
+                    <span style="font-size:13px; font-weight:normal; color:#b45309;">अन्य स्टाफ को काम सौंपें (आपको यह विशेष अधिकार दिया गया है)</span>
+                </div>
+                <form onsubmit="event.preventDefault(); handleStaffDelegatingTask();">
+                    <div class="grid-layout" style="grid-template-columns: 1fr 1fr; gap:10px;">
+                        <div class="form-group">
+                            <input type="text" id="stf-t-title" class="form-control" placeholder="काम का नाम (Task Title)" required>
+                        </div>
+                        <div class="form-group">
+                            <select id="stf-t-assignee" class="form-control" required>
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="stf-t-desc" class="form-control" rows="2" placeholder="काम का विवरण (Description)" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size:12px; color:#92400e;">Deadline (आखरी तारीख और समय)</label>
+                        <input type="datetime-local" id="stf-t-deadline" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-warning" style="color:white; font-weight:bold;">🚀 Assign Task / काम सौंपें</button>
+                </form>
             </div>
 
             <div class="card">
@@ -688,7 +737,7 @@
         let managerSelectedStaffId = null; 
         let editingStaffId = null;
         let isDataLoaded = false;
-        let knownTaskIds = []; // नया वेरिएबल: पहले से देखे गए टास्क को ट्रैक करने के लिए
+        let knownTaskIds = [];
 
         function saveUsers() { db.ref('users').set(usersDB); }
         function saveTasks() { db.ref('tasks').set(tasksDB); }
@@ -724,7 +773,6 @@
             loginBtn.innerText = "Login / लॉगिन करें";
             loginBtn.disabled = false;
 
-            // --- AUTO LOGIN CHECK ---
             const savedUserId = localStorage.getItem('rangriti_user_id');
             if (savedUserId) {
                 const foundUser = usersDB.find(u => u.id === savedUserId);
@@ -732,7 +780,6 @@
                     performLogin(foundUser);
                 }
             }
-
         }).catch(err => {
             document.getElementById('live-indicator').innerText = "🔴 Offline (Database Error)";
             document.getElementById('live-indicator').style.color = "var(--danger)";
@@ -751,51 +798,99 @@
             } else {
                 renderStaffTasks();
                 renderStaffAttendanceWidget();
+                renderStaffAssignForm(); // Show/hide assign form based on permission
                 updateNotifications();
             }
         }
-        
-        // --- NOTIFICATION LOGIC ---
+
+        // --- Render Staff Task Assignment Form (If Authorized) ---
+        function renderStaffAssignForm() {
+            const assignCard = document.getElementById('staff-assign-task-card');
+            const assigneeSelect = document.getElementById('stf-t-assignee');
+            
+            if (currentUser.canAssignTasks) {
+                assignCard.style.display = 'block';
+                assigneeSelect.innerHTML = '<option value="" disabled selected>👉 स्टाफ चुनें (Select Staff)</option>';
+                
+                // Show all staff except themselves
+                const otherStaff = usersDB.filter(u => u.role === 'staff' && u.id !== currentUser.id);
+                otherStaff.forEach(s => {
+                    assigneeSelect.innerHTML += `<option value="${s.id}">${s.name} (${s.designation || 'Staff'})</option>`;
+                });
+
+                // Default date logic for staff form
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                tomorrow.setMinutes(tomorrow.getMinutes() - tomorrow.getTimezoneOffset());
+                const sdInput = document.getElementById('stf-t-deadline');
+                if(sdInput && !sdInput.value) sdInput.value = tomorrow.toISOString().slice(0,16);
+
+            } else {
+                assignCard.style.display = 'none';
+            }
+        }
+
+        // --- Handle Task Creation by Staff ---
+        function handleStaffDelegatingTask() {
+            const title = document.getElementById('stf-t-title').value.trim();
+            const desc = document.getElementById('stf-t-desc').value.trim();
+            const assigneeId = document.getElementById('stf-t-assignee').value;
+            const deadline = document.getElementById('stf-t-deadline').value;
+
+            if (!assigneeId) return alert("❌ Please select a staff member first.");
+
+            const staffObj = usersDB.find(u => u.id === assigneeId);
+
+            const newTask = {
+                id: 'special_' + Date.now(),
+                title: title + ` (Assigned by ${currentUser.name})`,
+                desc: desc,
+                assigneeId: assigneeId,
+                assigneeName: staffObj.name,
+                deadline: deadline,
+                status: 'pending',
+                completedAt: null,
+                isDaily: false,
+                isRead: false,
+                replyText: ""
+            };
+
+            tasksDB.unshift(newTask);
+            saveTasks();
+
+            document.getElementById('stf-t-title').value = '';
+            document.getElementById('stf-t-desc').value = '';
+            alert(`✅ Task Assigned Successfully to ${staffObj.name}!`);
+        }
+
         function updateNotifications() {
             if (!currentUser || currentUser.role === 'manager') return;
-            
             const unreadTasks = tasksDB.filter(t => t.assigneeId === currentUser.id && t.status === 'pending' && !t.isRead);
             const badge = document.getElementById('notif-badge');
             
             if (unreadTasks.length > 0) {
                 badge.style.display = 'block';
                 badge.innerText = unreadTasks.length;
-
-                // केवल उन टास्क्स को निकालें जिनका नोटिफिकेशन अभी तक नहीं दिया गया है
                 const newTasks = unreadTasks.filter(t => !knownTaskIds.includes(t.id));
 
                 if (newTasks.length > 0) {
-                    // 1. रिंगटोन बजाएं
                     const audio = document.getElementById('notification-sound');
                     if (audio) {
-                        // ब्राउज़र पॉलिसी को हैंडल करने के लिए catch का उपयोग
                         audio.play().catch(e => console.log("Audio blocked by browser. User needs to interact with the page first.", e));
                     }
-
-                    // 2. पॉप-अप (System Notification) दिखाएं
                     const title = "नया काम मिला है! (New Task)";
                     const options = {
                         body: `आपको ${newTasks.length} नया काम सौंपा गया है। कृपया ऐप चेक करें!`,
-                        icon: "https://cdn-icons-png.flaticon.com/512/1827/1827370.png", // आप अपनी कंपनी का लोगो लगा सकते हैं
-                        vibrate: [200, 100, 200] // मोबाइल फ़ोन में वाइब्रेशन के लिए
+                        icon: "https://cdn-icons-png.flaticon.com/512/1827/1827370.png", 
+                        vibrate: [200, 100, 200]
                     };
-
                     if ("Notification" in window && Notification.permission === "granted") {
                         new Notification(title, options);
                     } else {
-                        // अगर सिस्टम नोटिफिकेशन बंद है, तो स्क्रीन पर नार्मल Alert दिखाएं
                         alert(`🔔 ${title}\n\n${options.body}`);
                     }
-
-                    // 3. नए टास्क्स को knownTaskIds में डाल दें ताकि दोबारा अलार्म न बजे
                     newTasks.forEach(t => knownTaskIds.push(t.id));
                 }
-
             } else {
                 badge.style.display = 'none';
             }
@@ -805,8 +900,6 @@
             const unreadTasks = tasksDB.filter(t => t.assigneeId === currentUser.id && t.status === 'pending' && !t.isRead);
             if (unreadTasks.length > 0) {
                 alert(`🔔 You have ${unreadTasks.length} new assigned task(s)! \n(आपके पास ${unreadTasks.length} नए कार्य हैं!)`);
-                
-                // Mark them as read
                 let needsSave = false;
                 tasksDB.forEach(t => {
                     if (t.assigneeId === currentUser.id && t.status === 'pending' && !t.isRead) {
@@ -814,9 +907,8 @@
                         needsSave = true;
                     }
                 });
-                
                 if (needsSave) {
-                    saveTasks(); // Push read status back to firebase
+                    saveTasks(); 
                     updateActiveUI();
                 }
             } else {
@@ -827,12 +919,10 @@
         function initializeDailyRoutineTasks(userId, userName) {
             const todayStr = new Date().toISOString().slice(0, 10);
             let hasChanges = false;
-            
             dailyTemplatesDB.forEach((template, index) => {
                 if (template.staffId === userId) {
                     const uniqueDailyId = `daily_${index + 1}_${userId}_${todayStr}`;
                     const exists = tasksDB.some(t => t.id === uniqueDailyId);
-                    
                     if (!exists) {
                         const newDailyTask = {
                             id: uniqueDailyId,
@@ -844,7 +934,7 @@
                             status: 'pending',
                             completedAt: null,
                             isDaily: true,
-                            isRead: false // Flag for notification
+                            isRead: false 
                         };
                         tasksDB.push(newDailyTask);
                         hasChanges = true;
@@ -857,7 +947,6 @@
         function initiateLogin() {
             const idInput = document.getElementById('login-id').value.trim();
             const passInput = document.getElementById('login-pass').value.trim();
-
             const foundUser = usersDB.find(u => u.id.toLowerCase() === idInput.toLowerCase() && u.pass === passInput);
 
             if (!foundUser) {
@@ -865,14 +954,13 @@
                 return;
             }
             performLogin(foundUser);
-            
             document.getElementById('login-id').value = '';
             document.getElementById('login-pass').value = '';
         }
 
         function performLogin(foundUser) {
             currentUser = foundUser;
-            localStorage.setItem('rangriti_user_id', foundUser.id); // Save ID for auto login
+            localStorage.setItem('rangriti_user_id', foundUser.id); 
             
             document.getElementById('logout-btn').style.display = 'block';
             document.getElementById('section-login').classList.remove('active');
@@ -884,18 +972,15 @@
                 
                 const allStaff = usersDB.filter(u => u.role === 'staff');
                 allStaff.forEach(s => initializeDailyRoutineTasks(s.id, s.name));
-                
                 updateActiveUI();
             } else {
                 document.getElementById('notification-bell').style.display = 'block';
                 document.getElementById('app-title').innerText = "📱 Staff Workspace / स्टाफ पैनल";
                 document.getElementById('section-staff').classList.add('active');
                 
-                // --- नया कोड: Notification Permission मांगें ---
                 if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
                     Notification.requestPermission();
                 }
-                // ----------------------------------------------
                 
                 document.getElementById('staff-welcome').innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -917,8 +1002,8 @@
         function handleLogout() {
             currentUser = null;
             managerSelectedStaffId = null;
-            knownTaskIds = []; // नया कोड: पुराने टास्क्स की मेमोरी क्लियर करें
-            localStorage.removeItem('rangriti_user_id'); // Remove from auto login
+            knownTaskIds = [];
+            localStorage.removeItem('rangriti_user_id'); 
             
             cancelEditStaff(); 
             document.getElementById('logout-btn').style.display = 'none';
@@ -931,7 +1016,6 @@
 
         function switchManagerTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            
             document.getElementById('manager-tasks-view').style.display = 'none';
             document.getElementById('manager-daily-view').style.display = 'none';
             document.getElementById('manager-staff-view').style.display = 'none';
@@ -957,7 +1041,6 @@
             }
         }
 
-        // ================= SELF REGISTRATION LOGIC =================
         function toggleRegister(show) {
             if (show) {
                 document.getElementById('login-form-box').style.display = 'none';
@@ -983,21 +1066,15 @@
             }
 
             if (usersDB.some(u => u.id === id)) {
-                alert("❌ This Login ID already exists! Please choose another ID.\n(यह लॉगिन आईडी पहले से मौजूद है!)");
+                alert("❌ This Login ID already exists! Please choose another ID.");
                 return;
             }
 
-            if (usersDB.some(u => u.mobile === mobile)) {
-                alert("❌ This Mobile Number is already registered!\n(यह मोबाइल नंबर पहले से रजिस्टर्ड है!)");
-                return;
-            }
-
-            usersDB.push({ id, pass, name, role: "staff", designation, mobile });
+            usersDB.push({ id, pass, name, role: "staff", designation, mobile, canAssignTasks: false });
             saveUsers();
             
             initializeDailyRoutineTasks(id, name);
-            
-            alert(`✅ Account Created Successfully! (खाता सफलतापूर्वक बन गया!)\n\nLogin ID: ${id}\nPassword: ${pass}`);
+            alert(`✅ Account Created Successfully!\n\nLogin ID: ${id}\nPassword: ${pass}`);
             
             document.getElementById('reg-name').value = '';
             document.getElementById('reg-designation').value = '';
@@ -1007,7 +1084,6 @@
             toggleRegister(false);
         }
 
-        // ================= FORGOT PASSWORD LOGIC (WITH MOBILE) =================
         function toggleForgotPassword(show) {
             if (show) {
                 document.getElementById('login-form-box').style.display = 'none';
@@ -1026,16 +1102,14 @@
             const newPassInput = document.getElementById('reset-pass').value.trim();
 
             const userIndex = usersDB.findIndex(u => u.id.toLowerCase() === idInput && u.mobile === mobileInput);
-
             if (userIndex === -1) {
-                alert("❌ Login ID or Mobile Number is incorrect!\n(लॉगिन आईडी या मोबाइल नंबर गलत है!)");
+                alert("❌ Login ID or Mobile Number is incorrect!");
                 return;
             }
 
             usersDB[userIndex].pass = newPassInput;
             saveUsers();
-
-            alert(`✅ Password Reset Successful!\n(पासवर्ड सफलतापूर्वक बदल दिया गया है!)\n\nID: ${idInput}\nNew Password: ${newPassInput}`);
+            alert(`✅ Password Reset Successful!\n\nID: ${idInput}\nNew Password: ${newPassInput}`);
             
             document.getElementById('reset-id').value = '';
             document.getElementById('reset-mobile').value = '';
@@ -1043,18 +1117,14 @@
             toggleForgotPassword(false);
         }
 
-        // ================= ATTENDANCE LOGIC =================
         function renderStaffAttendanceWidget() {
             const todayStr = new Date().toISOString().slice(0, 10);
             const actionArea = document.getElementById('attendance-action-area');
             if(!actionArea) return;
             
             const todayRecord = attendanceDB.find(a => a.staffId === currentUser.id && a.date === todayStr);
-
             if (!todayRecord) {
-                actionArea.innerHTML = `
-                    <button class="btn btn-success" onclick="markStaffAttendance('in')">🟢 Punch In (इन करें)</button>
-                `;
+                actionArea.innerHTML = `<button class="btn btn-success" onclick="markStaffAttendance('in')">🟢 Punch In (इन करें)</button>`;
             } else if (todayRecord && !todayRecord.punchOut) {
                 actionArea.innerHTML = `
                     <div style="margin-bottom: 12px; font-weight:bold; color:var(--success);">✅ Punched In: ${formatDateTime(todayRecord.punchIn).split(' ')[1]}</div>
@@ -1098,13 +1168,11 @@
                         const rec = attendanceDB[recordIdx];
                         rec.punchOut = nowIso;
                         rec.punchOutLoc = gpsCoords;
-                        
                         const diffMs = new Date(nowIso) - new Date(rec.punchIn);
                         const totalSecs = Math.floor(diffMs / 1000);
                         const totalMins = Math.floor(totalSecs / 60);
                         const hrs = Math.floor(totalMins / 60);
                         const mins = totalMins % 60;
-                        
                         rec.totalTime = `${hrs} hr ${mins} min / ${hrs} घंटे ${mins} मिनट`;
                     }
                 }
@@ -1115,56 +1183,43 @@
         function renderManagerAttendance() {
             const tbody = document.getElementById('manager-attendance-tbody');
             const titleDate = document.getElementById('manager-attendance-date-title');
-            
             const todayDateObj = new Date();
             const todayStr = todayDateObj.toISOString().slice(0, 10);
             
-            if(titleDate) {
-                titleDate.innerText = `⏰ Staff Attendance Tracker: ${todayDateObj.toLocaleDateString('hi-IN')}`;
-            }
-
+            if(titleDate) titleDate.innerText = `⏰ Staff Attendance Tracker: ${todayDateObj.toLocaleDateString('hi-IN')}`;
             if(!tbody) return;
             tbody.innerHTML = '';
             
             const staffMembers = usersDB.filter(u => u.role === 'staff');
-            
             if (staffMembers.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="empty-state">No staff members found. / कोई स्टाफ सदस्य नहीं मिला।</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="empty-state">No staff members found.</td></tr>`;
                 return;
             }
 
             staffMembers.forEach(staff => {
                 const record = attendanceDB.find(a => a.staffId === staff.id && a.date === todayStr);
-                
-                let statusHTML = `<span class="status-absent">🔴 Absent / अनुपस्थित</span>`;
+                let statusHTML = `<span class="status-absent">🔴 Absent</span>`;
                 let punchInHTML = `-`;
                 let punchOutHTML = `-`;
                 let totalWorkHours = `-`;
 
                 if (record) {
-                    statusHTML = `<span class="status-present">🟢 Present / उपस्थित</span>`;
-                    
+                    statusHTML = `<span class="status-present">🟢 Present</span>`;
                     const inTime = formatDateTime(record.punchIn).split(' ')[1];
-                    let inLocHTML = "";
-                    if (record.punchInLoc && record.punchInLoc.includes(",")) {
-                        inLocHTML = `<br><a class="map-link" href="https://www.google.com/maps?q=${record.punchInLoc}" target="_blank">🗺 View Map (नक्शा)</a>`;
-                    } else {
-                        inLocHTML = `<br><span style="font-size:11px;color:var(--danger);">${record.punchInLoc || 'NA'}</span>`;
-                    }
+                    let inLocHTML = (record.punchInLoc && record.punchInLoc.includes(",")) 
+                        ? `<br><a class="map-link" href="https://www.google.com/maps?q=${record.punchInLoc}" target="_blank">🗺 View Map</a>` 
+                        : `<br><span style="font-size:11px;color:var(--danger);">${record.punchInLoc || 'NA'}</span>`;
                     punchInHTML = `<b>${inTime}</b>${inLocHTML}`;
 
                     if (record.punchOut) {
                         const outTime = formatDateTime(record.punchOut).split(' ')[1];
-                        let outLocHTML = "";
-                        if (record.punchOutLoc && record.punchOutLoc.includes(",")) {
-                            outLocHTML = `<br><a class="map-link" href="https://www.google.com/maps?q=${record.punchOutLoc}" target="_blank">🗺 View Map (नक्शा)</a>`;
-                        } else {
-                            outLocHTML = `<br><span style="font-size:11px;color:var(--danger);">${record.punchOutLoc || 'NA'}</span>`;
-                        }
+                        let outLocHTML = (record.punchOutLoc && record.punchOutLoc.includes(",")) 
+                            ? `<br><a class="map-link" href="https://www.google.com/maps?q=${record.punchOutLoc}" target="_blank">🗺 View Map</a>` 
+                            : `<br><span style="font-size:11px;color:var(--danger);">${record.punchOutLoc || 'NA'}</span>`;
                         punchOutHTML = `<b>${outTime}</b>${outLocHTML}`;
                         totalWorkHours = `<span class="duration-display">${record.totalTime}</span>`;
                     } else {
-                        punchOutHTML = `<span style="font-size:12px; color:var(--warning); font-weight:bold; background:#fef9c3; padding:2px 6px; border-radius:4px;">On Duty / ड्यूटी चालू है...</span>`;
+                        punchOutHTML = `<span style="font-size:12px; color:var(--warning); font-weight:bold; background:#fef9c3; padding:2px 6px; border-radius:4px;">On Duty</span>`;
                         totalWorkHours = `<span style="color:var(--text-muted); font-style:italic;">Pending Out</span>`;
                     }
                 }
@@ -1185,41 +1240,25 @@
             });
         }
 
-        // ================= DAILY ROUTINE LOGIC =================
         function handleCreateDailyTemplate() {
             const title = document.getElementById('dl-title').value.trim();
             const desc = document.getElementById('dl-desc').value.trim();
             const targetStaffId = document.getElementById('dl-assignee').value;
-
-            if (!title || !desc || !targetStaffId) {
-                alert("❌ Please fill out all fields and ensure a staff member is created first.");
-                return;
-            }
-
+            if (!title || !desc || !targetStaffId) return alert("❌ Fill out all fields.");
             const staffObj = usersDB.find(u => u.id === targetStaffId);
 
-            dailyTemplatesDB.push({ 
-                title: title, 
-                desc: desc, 
-                staffId: targetStaffId, 
-                staffName: staffObj.name 
-            });
-            
+            dailyTemplatesDB.push({ title, desc, staffId: targetStaffId, staffName: staffObj.name });
             saveTemplates();
-
             document.getElementById('dl-title').value = '';
             document.getElementById('dl-desc').value = '';
-            
             initializeDailyRoutineTasks(targetStaffId, staffObj.name);
-            alert(`✅ Daily Task successfully assigned to ${staffObj.name}! (यह दैनिक कार्य चुनिंदा स्टाफ को सौंप दिया गया है!)`);
+            alert(`✅ Daily Task successfully assigned!`);
         }
 
         function deleteDailyTemplate(index) {
-            if (confirm("Are you sure you want to remove this daily task template? (क्या आप इस डेली टास्क टेम्प्लेट को हटाना चाहते हैं?)")) {
+            if (confirm("Are you sure you want to remove this daily task template?")) {
                 const tpl = dailyTemplatesDB[index];
-                
                 tasksDB = tasksDB.filter(t => !(t.isDaily && t.assigneeId === tpl.staffId && t.title.includes(tpl.title) && t.status === 'pending'));
-                
                 dailyTemplatesDB.splice(index, 1);
                 saveTemplates();
                 saveTasks();
@@ -1230,12 +1269,10 @@
             const container = document.getElementById('manager-daily-template-list');
             if(!container) return;
             container.innerHTML = '';
-
             if (dailyTemplatesDB.length === 0) {
                 container.innerHTML = '<div class="empty-state">No daily task templates defined.</div>';
                 return;
             }
-
             dailyTemplatesDB.forEach((template, idx) => {
                 container.innerHTML += `
                     <div class="template-item" style="border-left: 4px solid var(--secondary-color);">
@@ -1243,10 +1280,10 @@
                             <div>
                                 <strong style="color:var(--primary-color); font-size:15px;">${template.title}</strong>
                                 <div style="font-size:12px; margin-top:3px; background:#f0fdf4; color:#166534; padding:2px 6px; border-radius:4px; display:inline-block; font-weight:bold;">
-                                    👤 Assigned Daily To / दैनिक असाइनमेंट: ${template.staffName || template.staffId}
+                                    👤 Assigned Daily To: ${template.staffName || template.staffId}
                                 </div>
                             </div>
-                            <button class="btn btn-danger" style="width:auto; padding:5px 10px; font-size:12px;" onclick="deleteDailyTemplate(${idx})">🗑 Delete / हटाएं</button>
+                            <button class="btn btn-danger" style="width:auto; padding:5px 10px; font-size:12px;" onclick="deleteDailyTemplate(${idx})">🗑 Delete</button>
                         </div>
                         <div style="font-size:13px; color:var(--text-muted); margin-top:5px;">${template.desc}</div>
                     </div>
@@ -1254,18 +1291,15 @@
             });
         }
 
-        // ================= MANAGER: STAFF CREATION / EDITING LOGIC =================
         function handleSaveStaff() {
             const name = document.getElementById('stf-name').value.trim();
             const designation = document.getElementById('stf-designation').value.trim();
             const mobile = document.getElementById('stf-mobile').value.trim();
             const id = document.getElementById('stf-id').value.trim().toLowerCase();
             const pass = document.getElementById('stf-pass').value.trim();
+            const canAssign = document.getElementById('stf-can-assign').checked;
 
-            if (!name || !designation || !mobile || !id || !pass) {
-                alert("❌ Please fill out all fields.");
-                return;
-            }
+            if (!name || !designation || !mobile || !id || !pass) return alert("❌ Please fill out all fields.");
 
             if (editingStaffId) {
                 const staffIdx = usersDB.findIndex(u => u.id === editingStaffId);
@@ -1274,6 +1308,7 @@
                     usersDB[staffIdx].designation = designation;
                     usersDB[staffIdx].mobile = mobile;
                     usersDB[staffIdx].pass = pass;
+                    usersDB[staffIdx].canAssignTasks = canAssign; // Update Permission
                     saveUsers();
                     
                     tasksDB.forEach(t => { if(t.assigneeId === editingStaffId) t.assigneeName = name; });
@@ -1283,26 +1318,18 @@
                     attendanceDB.forEach(a => { if(a.staffId === editingStaffId) a.staffName = name; });
                     saveAttendance();
                     
-                    alert(`✅ Staff Updated Successfully! (स्टाफ अपडेट हो गया)`);
+                    alert(`✅ Staff Updated Successfully!`);
                     cancelEditStaff();
                 }
             } else {
-                if (usersDB.some(u => u.id === id)) {
-                    alert("❌ This ID already exists! Please use a unique ID. / यह आईडी पहले से मौजूद है!");
-                    return;
-                }
-                
-                if (usersDB.some(u => u.mobile === mobile)) {
-                    alert("❌ This Mobile is already registered! / यह मोबाइल नंबर पहले से मौजूद है!");
-                    return;
-                }
+                if (usersDB.some(u => u.id === id)) return alert("❌ This ID already exists!");
+                if (usersDB.some(u => u.mobile === mobile)) return alert("❌ This Mobile is already registered!");
 
-                usersDB.push({ id, pass, name, role: "staff", designation: designation, mobile: mobile });
+                usersDB.push({ id, pass, name, role: "staff", designation, mobile, canAssignTasks: canAssign });
                 saveUsers();
-                
                 initializeDailyRoutineTasks(id, name);
                 cancelEditStaff();
-                alert(`✅ Staff Registered Successfully! \nStaff ID: ${id} \nDesignation: ${designation}`);
+                alert(`✅ Staff Registered Successfully!`);
             }
         }
 
@@ -1316,9 +1343,9 @@
             document.getElementById('stf-id').value = staff.id;
             document.getElementById('stf-id').disabled = true; 
             document.getElementById('stf-pass').value = staff.pass;
+            document.getElementById('stf-can-assign').checked = staff.canAssignTasks || false;
             
             editingStaffId = staffId;
-            
             document.getElementById('staff-form-title').innerText = "✏️ Edit Staff Account";
             document.getElementById('staff-form-subtitle').innerText = "स्टाफ की जानकारी बदलें";
             
@@ -1338,6 +1365,7 @@
             document.getElementById('stf-id').value = '';
             document.getElementById('stf-id').disabled = false;
             document.getElementById('stf-pass').value = '';
+            document.getElementById('stf-can-assign').checked = false;
             
             const titleEl = document.getElementById('staff-form-title');
             if(titleEl) titleEl.innerText = "➕ Add/Edit Staff Account";
@@ -1349,14 +1377,12 @@
                 submitBtn.innerHTML = '🔑 Save Account / सेव करें';
                 submitBtn.classList.replace('btn-warning', 'btn-success');
             }
-            
             const cancelBtn = document.getElementById('staff-cancel-btn');
             if(cancelBtn) cancelBtn.style.display = 'none';
         }
 
         function deleteStaff(staffId, staffName) {
-            if (confirm(`Are you sure you want to completely remove ${staffName}? \n(क्या आप सच में ${staffName} को हटाना चाहते हैं?)`)) {
-                
+            if (confirm(`Are you sure you want to completely remove ${staffName}?`)) {
                 usersDB = usersDB.filter(u => u.id !== staffId);
                 tasksDB = tasksDB.filter(t => t.assigneeId !== staffId);
                 dailyTemplatesDB = dailyTemplatesDB.filter(t => t.staffId !== staffId);
@@ -1369,10 +1395,9 @@
                 saveTasks();
                 saveTemplates();
                 saveAttendance();
-                alert(`✅ ${staffName} has been removed successfully!`);
+                alert(`✅ ${staffName} removed successfully!`);
             }
         }
-        // ====================================================================
 
         function deleteAssignedTask(taskId) {
             if (confirm("Are you sure you want to permanently delete this task?")) {
@@ -1383,11 +1408,7 @@
         }
 
         function toggleStaffFilter(staffId) {
-            if (managerSelectedStaffId === staffId) {
-                managerSelectedStaffId = null;
-            } else {
-                managerSelectedStaffId = staffId;
-            }
+            managerSelectedStaffId = (managerSelectedStaffId === staffId) ? null : staffId;
             renderManagerTasks();
         }
 
@@ -1398,16 +1419,11 @@
             
             if(specialSelect) {
                 specialSelect.innerHTML = '';
-                staffMembers.forEach(s => {
-                    specialSelect.innerHTML += `<option value="${s.id}">${s.name} (${s.designation || 'Staff'})</option>`;
-                });
+                staffMembers.forEach(s => { specialSelect.innerHTML += `<option value="${s.id}">${s.name} (${s.designation || 'Staff'})</option>`; });
             }
-            
             if(dailySelect) {
                 dailySelect.innerHTML = '';
-                staffMembers.forEach(s => {
-                    dailySelect.innerHTML += `<option value="${s.id}">${s.name} (${s.designation || 'Staff'})</option>`;
-                });
+                staffMembers.forEach(s => { dailySelect.innerHTML += `<option value="${s.id}">${s.name} (${s.designation || 'Staff'})</option>`; });
             }
         }
 
@@ -1423,23 +1439,21 @@
             }
 
             staffMembers.forEach(s => {
+                const permissionBadge = s.canAssignTasks ? `<span class="type-badge permission-badge" style="margin-top:4px;">🔑 Task Admin</span>` : '';
                 container.innerHTML += `
                     <div class="staff-item" style="border-left: 4px solid var(--primary-color);">
                         <div class="task-header-flex" style="align-items: center;">
                             <div>
                                 <strong>Name / नाम:</strong> ${s.name}<br>
-                                <span class="type-badge designation-badge" style="margin-top:4px;">${s.designation || 'Staff'}</span><br>
+                                <span class="type-badge designation-badge" style="margin-top:4px;">${s.designation || 'Staff'}</span>
+                                ${permissionBadge}<br>
                                 📱 <strong>Mobile:</strong> <code style="font-weight:bold; color:var(--text-main);">${s.mobile || 'N/A'}</code><br>
                                 🔑 <strong>Login ID:</strong> <code style="background:#eef2f3; padding:2px 4px; border-radius:4px; font-weight:bold; color:var(--primary-color);">${s.id}</code> | 
-                                🔒 <strong>Password / पासवर्ड:</strong> <code>${s.pass}</code>
+                                🔒 <strong>Password:</strong> <code>${s.pass}</code>
                             </div>
                             <div style="display:flex; flex-direction:column; gap:5px;">
-                                <button class="btn btn-warning" style="width:auto; padding:6px 12px; font-size:12px; font-weight:bold;" onclick="editStaff('${s.id}')">
-                                    ✏️ Edit / बदलें
-                                </button>
-                                <button class="btn btn-danger" style="width:auto; padding:6px 12px; font-size:12px; font-weight:bold;" onclick="deleteStaff('${s.id}', '${s.name}')">
-                                    🗑 Remove / हटाएं
-                                </button>
+                                <button class="btn btn-warning" style="width:auto; padding:6px 12px; font-size:12px; font-weight:bold;" onclick="editStaff('${s.id}')">✏️ Edit</button>
+                                <button class="btn btn-danger" style="width:auto; padding:6px 12px; font-size:12px; font-weight:bold;" onclick="deleteStaff('${s.id}', '${s.name}')">🗑 Remove</button>
                             </div>
                         </div>
                     </div>
@@ -1454,7 +1468,6 @@
             const deadline = document.getElementById('t-deadline').value;
 
             if (!assigneeId) return alert("Select staff first.");
-
             const staffObj = usersDB.find(u => u.id === assigneeId);
 
             const newTask = {
@@ -1467,7 +1480,8 @@
                 status: 'pending',
                 completedAt: null,
                 isDaily: false,
-                isRead: false // Flag for notification
+                isRead: false,
+                replyText: ""
             };
 
             tasksDB.unshift(newTask);
@@ -1487,19 +1501,15 @@
         function renderManagerTasks() {
             const activeStaff = usersDB.filter(u => u.role === 'staff');
             const activeStaffIds = activeStaff.map(u => u.id);
-            
             const validTasks = tasksDB.filter(t => activeStaffIds.includes(t.assigneeId));
 
             const total = validTasks.length;
             const pending = validTasks.filter(t => t.status === 'pending').length;
             const done = validTasks.filter(t => t.status === 'done').length;
 
-            const totalField = document.getElementById('s-total');
-            if (totalField) totalField.innerText = total;
-            const pendingField = document.getElementById('s-pending');
-            if (pendingField) pendingField.innerText = pending;
-            const doneField = document.getElementById('s-done');
-            if (doneField) doneField.innerText = done;
+            if (document.getElementById('s-total')) document.getElementById('s-total').innerText = total;
+            if (document.getElementById('s-pending')) document.getElementById('s-pending').innerText = pending;
+            if (document.getElementById('s-done')) document.getElementById('s-done').innerText = done;
 
             const metricsTbody = document.getElementById('manager-staff-metrics-tbody');
             if(!metricsTbody) return;
@@ -1542,7 +1552,6 @@
                                 '<span class="type-badge type-daily">Daily Duty</span>' : 
                                 '<span class="type-badge type-special">Special Task</span>';
 
-                            // --- Manager: Show Reply feature added here ---
                             tasksHTML += `
                                 <div class="task-item ${t.status} ${t.isDaily ? 'daily-routine' : ''}" style="margin-bottom: 10px; background: white;">
                                     <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -1596,7 +1605,6 @@
 
                 let actionHTML = "";
                 if (!isDone) {
-                    // --- Staff: Reply & Submit feature added here ---
                     actionHTML = `
                         <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--border);">
                             <input type="text" id="reply-${t.id}" class="form-control" placeholder="📝 काम की रिपोर्ट / रिप्लाई लिखें (Optional)" style="font-size: 13px; padding: 8px; margin-bottom: 8px;">
@@ -1612,7 +1620,6 @@
                     `;
                 }
                 
-                // Add highlight for new unread tasks
                 const unreadClass = !t.isRead && !isDone ? 'unread-task' : '';
                 const newBadge = !t.isRead && !isDone ? '<span class="badge" style="background:#ef4444; color:white; margin-left:10px; animation: pulse 2s infinite;">🆕 NEW</span>' : '';
 
@@ -1633,19 +1640,18 @@
             });
         }
 
-        // --- Save Reply Text feature added here ---
         function markTaskDone(taskId) {
             const replyInput = document.getElementById(`reply-${taskId}`);
             const replyText = replyInput ? replyInput.value.trim() : "";
 
             setTimeout(() => {
-                if (confirm("Are you sure you want to submit this task report? (क्या आप इस काम की रिपोर्ट सबमिट करना चाहते हैं?)")) {
+                if (confirm("Are you sure you want to submit this task report?")) {
                     const idx = tasksDB.findIndex(t => t.id === taskId);
                     if (idx !== -1) {
                         tasksDB[idx].status = 'done';
                         tasksDB[idx].completedAt = new Date().toISOString();
-                        tasksDB[idx].isRead = true; // Auto-mark read if they complete it
-                        tasksDB[idx].replyText = replyText; // Save the staff reply
+                        tasksDB[idx].isRead = true; 
+                        tasksDB[idx].replyText = replyText; 
                         saveTasks();
                     }
                 }
@@ -1660,5 +1666,3 @@
     </script>
 </body>
 </html>
-
-```
