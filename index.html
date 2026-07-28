@@ -13,6 +13,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
+    <!-- Glassmorphism Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
         :root {
             --primary-color: #1e3a8a;
@@ -31,14 +34,128 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Open Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
             padding-bottom: 30px;
+            min-height: 100vh;
         }
+
+        /* --------------------------------------------------- */
+        /* ✨ GLASSMORPHISM LOGIN CSS START */
+        /* --------------------------------------------------- */
+        .login-fullscreen-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("hero-bg.jpg"), #000;
+            background-position: center;
+            background-size: cover;
+            z-index: -1;
+            display: block; /* Hidden via JS after login */
+        }
+
+        .glass-wrapper {
+            width: 400px;
+            max-width: 90%;
+            margin: 10vh auto;
+            border-radius: 8px;
+            padding: 40px 30px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(9px);
+            -webkit-backdrop-filter: blur(9px);
+            background: rgba(0, 0, 0, 0.2);
+            box-shadow: 0 15px 25px rgba(0,0,0,0.2);
+        }
+
+        .glass-wrapper form { display: flex; flex-direction: column; }
+        .glass-wrapper h2 { font-size: 2rem; margin-bottom: 25px; color: #fff; }
+
+        .glass-wrapper .input-field {
+            position: relative;
+            border-bottom: 2px solid #ccc;
+            margin: 15px 0;
+            text-align: left;
+        }
+
+        .glass-wrapper .input-field label {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            color: #fff;
+            font-size: 16px;
+            pointer-events: none;
+            transition: 0.15s ease;
+        }
+
+        .glass-wrapper .input-field input {
+            width: 100%;
+            height: 40px;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            color: #fff;
+        }
+
+        .glass-wrapper .input-field input:focus~label,
+        .glass-wrapper .input-field input:valid~label {
+            font-size: 0.8rem;
+            top: 10px;
+            transform: translateY(-120%);
+        }
+
+        .glass-wrapper .forget {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 25px 0 35px 0;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .glass-wrapper #remember { accent-color: #fff; }
+        .glass-wrapper .forget label { display: flex; align-items: center; cursor: pointer; }
+        .glass-wrapper .forget label p { margin-left: 8px; }
+
+        .glass-wrapper a { color: #efefef; text-decoration: none; }
+        .glass-wrapper a:hover { text-decoration: underline; }
+
+        .glass-wrapper button {
+            background: #fff;
+            color: #000;
+            font-weight: 600;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 16px;
+            border: 2px solid transparent;
+            transition: 0.3s ease;
+        }
+
+        .glass-wrapper button:hover {
+            color: #fff;
+            border-color: #fff;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .glass-wrapper .register {
+            text-align: center;
+            margin-top: 30px;
+            color: #fff;
+            font-size: 14px;
+        }
+        /* --------------------------------------------------- */
+        /* ✨ GLASSMORPHISM LOGIN CSS END */
+        /* --------------------------------------------------- */
 
         .header {
             background-color: var(--primary-color);
@@ -47,6 +164,7 @@
             text-align: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             position: relative;
+            display: none; /* Hidden by default, shown after login */
         }
 
         .header h1 { font-size: 20px; font-weight: 600; }
@@ -126,7 +244,7 @@
             gap: 8px;
         }
 
-        /* Form Styling */
+        /* Form Styling (App interior) */
         .form-group { margin-bottom: 15px; }
         .form-group label {
             display: block;
@@ -181,9 +299,6 @@
         .btn-danger:hover { background-color: #b91c1c; }
         .btn:disabled { background-color: #94a3b8; cursor: wait; }
 
-        /* Login Layout */
-        .login-box { max-width: 450px; margin: 60px auto; }
-
         /* Manager Tabs */
         .manager-tabs { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
         .tab-btn {
@@ -205,7 +320,6 @@
         .task-item.done { border-left-color: var(--success); background-color: #f8fafc; }
         .task-item.daily-routine { border-left-style: dashed; border-left-width: 6px; }
         
-        /* New Task Highlight */
         .task-item.unread-task {
             border: 2px solid #ef4444;
             box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
@@ -290,7 +404,10 @@
     <!-- Notification Sound -->
     <audio id="notification-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
-    <div class="header">
+    <!-- Fullscreen Glassmorphism Background -->
+    <div id="login-fullscreen-bg" class="login-fullscreen-bg"></div>
+
+    <div class="header" id="app-header">
         <h1 id="app-title">📊 Live Task Reporting App / लाइव टास्क ऐप</h1>
         <div id="live-indicator" style="font-size: 12px; margin-top: 5px; color: #86efac;">🔴 Offline (Connecting...)</div>
         
@@ -303,99 +420,9 @@
         </div>
     </div>
 
-    <div class="container">
+    <!-- MAIN APP CONTAINER -->
+    <div class="container" id="main-container" style="display: none;"> <!-- Hidden until login -->
         
-        <!-- LOGIN SECTION -->
-        <div id="section-login" class="app-section active">
-            <div class="card login-box" id="login-form-box">
-                <div class="card-title" style="justify-content: center; font-size: 20px; flex-direction: column; text-align: center;">
-                    <strong>🔐 Secure Login</strong>
-                    <span style="font-size: 14px; font-weight: normal; color: var(--text-muted);">सुरक्षित लॉगिन</span>
-                </div>
-                <form onsubmit="event.preventDefault(); initiateLogin();">
-                    <div class="form-group">
-                        <label class="lang-en">Login ID</label>
-                        <div class="lang-hi">लॉगिन आईडी दर्ज करें</div>
-                        <input type="text" id="login-id" class="form-control" placeholder="Enter Login ID" required autocomplete="username">
-                    </div>
-                    <div class="form-group">
-                        <label class="lang-en">Password</label>
-                        <div class="lang-hi">पासवर्ड दर्ज करें</div>
-                        <input type="password" id="login-pass" class="form-control" placeholder="Enter Password" required autocomplete="current-password">
-                    </div>
-                    <button type="submit" class="btn" id="login-btn" style="margin-top: 10px;" disabled>⏳ Connecting to Database...</button>
-                </form>
-                
-                <div style="display: flex; justify-content: space-between; margin-top: 20px; font-size: 14px; font-weight: 600;">
-                    <a href="#" onclick="toggleRegister(true)" style="color: var(--primary-color); text-decoration: none;">➕ Create Account (नया खाता)</a>
-                    <a href="#" onclick="toggleForgotPassword(true)" style="color: var(--secondary-color); text-decoration: none;">Forgot Password? (पासवर्ड भूल गए)</a>
-                </div>
-            </div>
-
-            <!-- Register Form -->
-            <div class="card login-box" id="register-box" style="display: none;">
-                <div class="card-title" style="justify-content: center; font-size: 20px; flex-direction: column; text-align: center;">
-                    <strong>📝 Create New Account</strong>
-                    <span style="font-size: 14px; font-weight: normal; color: var(--text-muted);">स्टाफ अपना नया खाता यहाँ बनाएं</span>
-                </div>
-                <form onsubmit="event.preventDefault(); handleSelfRegister();">
-                    <div class="form-group">
-                        <label class="lang-en">Full Name / पूरा नाम</label>
-                        <input type="text" id="reg-name" class="form-control" placeholder="Add Your Name" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="lang-en">Designation / पद</label>
-                        <input type="text" id="reg-designation" class="form-control" placeholder="Your Designation" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="lang-en">Mobile Number / मोबाइल नंबर</label>
-                        <input type="tel" id="reg-mobile" class="form-control" placeholder="10-digit mobile number" pattern="[0-9]{10}" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="lang-en">Create Login ID / नई लॉगिन आईडी</label>
-                        <input type="text" id="reg-id" class="form-control" placeholder="Make Your LogIn ID (No spaces)" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="lang-en">Create Password / पासवर्ड बनाएं</label>
-                        <input type="password" id="reg-pass" class="form-control" placeholder="Enter new password" required>
-                    </div>
-                    <button type="submit" class="btn btn-success" style="margin-top: 10px;">🚀 Register Now (रजिस्टर करें)</button>
-                </form>
-                <div style="text-align: center; margin-top: 15px;">
-                    <a href="#" onclick="toggleRegister(false)" style="color: var(--text-muted); font-size: 14px; font-weight: 600; text-decoration: none;">⬅️ Back to Login / वापस जाएं</a>
-                </div>
-            </div>
-
-            <!-- Forgot Password Form -->
-            <div class="card login-box" id="forgot-password-box" style="display: none;">
-                <div class="card-title" style="justify-content: center; font-size: 20px; flex-direction: column; text-align: center;">
-                    <strong>🔄 Reset Password</strong>
-                    <span style="font-size: 14px; font-weight: normal; color: var(--text-muted);">नया पासवर्ड बनाएं</span>
-                </div>
-                <form onsubmit="event.preventDefault(); handlePasswordReset();">
-                    <div class="form-group">
-                        <label class="lang-en">Your Login ID</label>
-                        <div class="lang-hi">अपनी लॉगिन आईडी दर्ज करें</div>
-                        <input type="text" id="reset-id" class="form-control" placeholder="Enter valid Login ID" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="lang-en">Registered Mobile Number</label>
-                        <div class="lang-hi">खाता बनाते समय डाला गया मोबाइल नंबर दर्ज करें</div>
-                        <input type="tel" id="reset-mobile" class="form-control" placeholder="Enter 10-digit mobile number" pattern="[0-9]{10}" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="lang-en">New Password</label>
-                        <div class="lang-hi">नया पासवर्ड दर्ज करें</div>
-                        <input type="text" id="reset-pass" class="form-control" placeholder="Enter new password" required>
-                    </div>
-                    <button type="submit" class="btn btn-warning" style="margin-top: 10px;">💾 Save New Password</button>
-                </form>
-                <div style="text-align: center; margin-top: 15px;">
-                    <a href="#" onclick="toggleForgotPassword(false)" style="color: var(--text-muted); font-size: 14px; font-weight: 600; text-decoration: none;">⬅️ Back to Login / वापस जाएं</a>
-                </div>
-            </div>
-        </div>
-
         <!-- MANAGER SECTION -->
         <div id="section-manager" class="app-section">
             <div class="manager-tabs">
@@ -525,7 +552,7 @@
                     </div>
                 </div>
 
-                <!-- Monthly Payroll Report Card (NEW) -->
+                <!-- Monthly Payroll Report Card -->
                 <div class="card" style="border-top: 4px solid var(--secondary-color); margin-top: 20px;">
                     <div class="card-title" style="flex-direction: column; align-items: flex-start;">
                         <strong>📅 Monthly Payroll & Attendance Report</strong>
@@ -553,7 +580,6 @@
                                 </tr>
                             </thead>
                             <tbody id="monthly-report-tbody">
-                                <!-- Monthly Report Rows go here -->
                             </tbody>
                         </table>
                     </div>
@@ -714,6 +740,91 @@
 
     </div>
 
+    <!-- GLASSMORPHISM LOGIN SECTIONS -->
+    <div id="section-login" class="app-section active">
+        
+        <!-- Login Box -->
+        <div class="wrapper glass-wrapper" id="login-form-box">
+            <form onsubmit="event.preventDefault(); initiateLogin();">
+                <h2>Login Form</h2>
+                <div class="input-field">
+                    <input type="text" id="login-id" required autocomplete="username">
+                    <label>Enter your Login ID</label>
+                </div>
+                <div class="input-field">
+                    <input type="password" id="login-pass" required autocomplete="current-password">
+                    <label>Enter your password</label>
+                </div>
+                <div class="forget">
+                    <label for="remember">
+                        <input type="checkbox" id="remember">
+                        <p>Remember me</p>
+                    </label>
+                    <a href="#" onclick="toggleForgotPassword(true)">Forgot password?</a>
+                </div>
+                <button type="submit" id="login-btn">Log In</button>
+                <div class="register">
+                    <p>Don't have an account? <a href="#" onclick="toggleRegister(true)">Register</a></p>
+                </div>
+            </form>
+        </div>
+
+        <!-- Register Box -->
+        <div class="wrapper glass-wrapper" id="register-box" style="display: none;">
+            <form onsubmit="event.preventDefault(); handleSelfRegister();">
+                <h2>Register</h2>
+                <div class="input-field">
+                    <input type="text" id="reg-name" required>
+                    <label>Full Name</label>
+                </div>
+                <div class="input-field">
+                    <input type="text" id="reg-designation" required>
+                    <label>Designation</label>
+                </div>
+                <div class="input-field">
+                    <input type="tel" id="reg-mobile" pattern="[0-9]{10}" required>
+                    <label>Mobile Number (10 digits)</label>
+                </div>
+                <div class="input-field">
+                    <input type="text" id="reg-id" required>
+                    <label>Create Login ID (No space)</label>
+                </div>
+                <div class="input-field">
+                    <input type="password" id="reg-pass" required>
+                    <label>Create Password</label>
+                </div>
+                <button type="submit">Register Now</button>
+                <div class="register">
+                    <p>Already have an account? <a href="#" onclick="toggleRegister(false)">Log In</a></p>
+                </div>
+            </form>
+        </div>
+
+        <!-- Forgot Password Box -->
+        <div class="wrapper glass-wrapper" id="forgot-password-box" style="display: none;">
+            <form onsubmit="event.preventDefault(); handlePasswordReset();">
+                <h2>Reset Password</h2>
+                <div class="input-field">
+                    <input type="text" id="reset-id" required>
+                    <label>Your Login ID</label>
+                </div>
+                <div class="input-field">
+                    <input type="tel" id="reset-mobile" pattern="[0-9]{10}" required>
+                    <label>Registered Mobile</label>
+                </div>
+                <div class="input-field">
+                    <input type="password" id="reset-pass" required>
+                    <label>New Password</label>
+                </div>
+                <button type="submit">Save New Password</button>
+                <div class="register">
+                    <p>Remembered your password? <a href="#" onclick="toggleForgotPassword(false)">Log In</a></p>
+                </div>
+            </form>
+        </div>
+        
+    </div>
+
     <script>
         // ==========================================
         // 1. FIREBASE CONFIGURATION
@@ -772,8 +883,6 @@
         let editingStaffId = null;
         let isDataLoaded = false;
         let knownTaskIds = [];
-
-        // Variable for storing currently generated report data for export
         let currentReportData = [];
 
         function saveUsers() { db.ref('users').set(usersDB); }
@@ -807,7 +916,7 @@
             document.getElementById('live-indicator').style.color = "#86efac";
             
             const loginBtn = document.getElementById('login-btn');
-            loginBtn.innerText = "Login / लॉगिन करें";
+            loginBtn.innerText = "Log In";
             loginBtn.disabled = false;
 
             const savedUserId = localStorage.getItem('rangriti_user_id');
@@ -848,14 +957,13 @@
                 return;
             }
 
-            // Calculate total days in the selected month
             const [year, month] = monthVal.split('-');
             const daysInMonth = new Date(year, month, 0).getDate();
 
             const staffMembers = usersDB.filter(u => u.role === 'staff');
             const tbody = document.getElementById('monthly-report-tbody');
             tbody.innerHTML = '';
-            currentReportData = []; // Clear old data
+            currentReportData = []; 
 
             if (staffMembers.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No staff found.</td></tr>';
@@ -863,13 +971,11 @@
             }
 
             staffMembers.forEach(staff => {
-                // Get all attendance records for this staff in the selected YYYY-MM
                 const staffAtt = attendanceDB.filter(a => a.staffId === staff.id && a.date.startsWith(monthVal));
                 
                 const presentDays = staffAtt.length;
                 const absentDays = daysInMonth - presentDays;
                 
-                // Calculate total working hours in the month
                 let totalMins = 0;
                 staffAtt.forEach(record => {
                     if (record.punchIn && record.punchOut) {
@@ -882,7 +988,6 @@
                 const mins = totalMins % 60;
                 const totalHoursStr = `${hrs} Hrs ${mins} Mins`;
 
-                // Save data for Export
                 currentReportData.push({
                     "Staff Name": staff.name,
                     "Designation": staff.designation || 'Staff',
@@ -891,7 +996,6 @@
                     "Total Working Hours": totalHoursStr
                 });
 
-                // Display on UI
                 tbody.innerHTML += `
                     <tr>
                         <td>
@@ -906,7 +1010,6 @@
                 `;
             });
 
-            // Show container and export buttons
             document.getElementById('monthly-report-container').style.display = 'block';
             document.getElementById('btn-export-excel').style.display = 'inline-block';
             document.getElementById('btn-export-pdf').style.display = 'inline-block';
@@ -916,12 +1019,10 @@
             if (currentReportData.length === 0) return;
             const monthVal = document.getElementById('report-month').value;
             
-            // Generate worksheet from JSON using SheetJS
             const ws = window.XLSX.utils.json_to_sheet(currentReportData);
             const wb = window.XLSX.utils.book_new();
             window.XLSX.utils.book_append_sheet(wb, ws, "Monthly_Payroll");
             
-            // Trigger download
             window.XLSX.writeFile(wb, `Payroll_Report_${monthVal}.xlsx`);
         }
 
@@ -929,17 +1030,14 @@
             if (currentReportData.length === 0) return;
             const monthVal = document.getElementById('report-month').value;
             
-            // Initialize jsPDF
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
-            // Title
             doc.setFontSize(16);
             doc.text(`Monthly Payroll & Attendance Report`, 14, 15);
             doc.setFontSize(11);
             doc.text(`Month/Year: ${monthVal}`, 14, 22);
             
-            // Prepare table data
             const tableColumn = ["Staff Name", "Designation", "Present Days", "Absent Days", "Total Working Hours"];
             const tableRows = [];
 
@@ -954,19 +1052,16 @@
                 tableRows.push(rowData);
             });
 
-            // AutoTable plugin generates the table
             doc.autoTable({
                 head: [tableColumn],
                 body: tableRows,
                 startY: 30,
                 styles: { fontSize: 10 },
-                headStyles: { fillColor: [30, 58, 138] } // Match --primary-color
+                headStyles: { fillColor: [30, 58, 138] } 
             });
 
-            // Trigger download
             doc.save(`Payroll_Report_${monthVal}.pdf`);
         }
-        // ------------------------------------------
 
         function renderStaffAssignForm() {
             const assignCard = document.getElementById('staff-assign-task-card');
@@ -1112,6 +1207,8 @@
                 alert("❌ Invalid Login ID or Password! / गलत लॉगिन आईडी या पासवर्ड!");
                 return;
             }
+            
+            // Check remember me (Optional visual only here, localstorage saves anyway in this app design)
             performLogin(foundUser);
             document.getElementById('login-id').value = '';
             document.getElementById('login-pass').value = '';
@@ -1123,6 +1220,11 @@
             
             document.getElementById('logout-btn').style.display = 'block';
             document.getElementById('section-login').classList.remove('active');
+            
+            // UI Toggle: Hide Glassmorphism BG, show App Header and Container
+            document.getElementById('login-fullscreen-bg').style.display = 'none';
+            document.getElementById('app-header').style.display = 'block';
+            document.getElementById('main-container').style.display = 'block';
 
             if (foundUser.role === 'manager') {
                 document.getElementById('notification-bell').style.display = 'none';
@@ -1134,7 +1236,7 @@
                 updateActiveUI();
             } else {
                 document.getElementById('notification-bell').style.display = 'block';
-                document.getElementById('app-title').innerText = "Staff Workspace";
+                document.getElementById('app-title').innerText = "📱 Staff Workspace / स्टाफ पैनल";
                 document.getElementById('section-staff').classList.add('active');
                 
                 if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
@@ -1169,7 +1271,12 @@
             document.getElementById('notification-bell').style.display = 'none';
             document.getElementById('section-manager').classList.remove('active');
             document.getElementById('section-staff').classList.remove('active');
-            document.getElementById('app-title').innerText = "RANGRITI";
+            
+            // UI Toggle: Show Glassmorphism BG, hide App Header and Container
+            document.getElementById('login-fullscreen-bg').style.display = 'block';
+            document.getElementById('app-header').style.display = 'none';
+            document.getElementById('main-container').style.display = 'none';
+            
             document.getElementById('section-login').classList.add('active');
         }
 
@@ -1193,7 +1300,6 @@
                 document.getElementById('tab-attendance').classList.add('active');
                 document.getElementById('manager-attendance-view').style.display = 'block';
                 
-                // Hide report generation view temporarily when switching back to tab
                 document.getElementById('monthly-report-container').style.display = 'none';
                 document.getElementById('btn-export-excel').style.display = 'none';
                 document.getElementById('btn-export-pdf').style.display = 'none';
@@ -1831,5 +1937,3 @@
     </script>
 </body>
 </html>
-
-```
