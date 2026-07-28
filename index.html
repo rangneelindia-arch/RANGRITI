@@ -281,6 +281,9 @@
 </head>
 <body>
 
+    <!-- Notification Sound -->
+    <audio id="notification-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+
     <div class="header">
         <h1 id="app-title">📊 Live Task Reporting App / लाइव टास्क ऐप</h1>
         <div id="live-indicator" style="font-size: 12px; margin-top: 5px; color: #86efac;">🔴 Offline (Connecting...)</div>
@@ -685,6 +688,7 @@
         let managerSelectedStaffId = null; 
         let editingStaffId = null;
         let isDataLoaded = false;
+        let knownTaskIds = []; // नया वेरिएबल: पहले से देखे गए टास्क को ट्रैक करने के लिए
 
         function saveUsers() { db.ref('users').set(usersDB); }
         function saveTasks() { db.ref('tasks').set(tasksDB); }
@@ -761,6 +765,37 @@
             if (unreadTasks.length > 0) {
                 badge.style.display = 'block';
                 badge.innerText = unreadTasks.length;
+
+                // केवल उन टास्क्स को निकालें जिनका नोटिफिकेशन अभी तक नहीं दिया गया है
+                const newTasks = unreadTasks.filter(t => !knownTaskIds.includes(t.id));
+
+                if (newTasks.length > 0) {
+                    // 1. रिंगटोन बजाएं
+                    const audio = document.getElementById('notification-sound');
+                    if (audio) {
+                        // ब्राउज़र पॉलिसी को हैंडल करने के लिए catch का उपयोग
+                        audio.play().catch(e => console.log("Audio blocked by browser. User needs to interact with the page first.", e));
+                    }
+
+                    // 2. पॉप-अप (System Notification) दिखाएं
+                    const title = "नया काम मिला है! (New Task)";
+                    const options = {
+                        body: `आपको ${newTasks.length} नया काम सौंपा गया है। कृपया ऐप चेक करें!`,
+                        icon: "https://cdn-icons-png.flaticon.com/512/1827/1827370.png", // आप अपनी कंपनी का लोगो लगा सकते हैं
+                        vibrate: [200, 100, 200] // मोबाइल फ़ोन में वाइब्रेशन के लिए
+                    };
+
+                    if ("Notification" in window && Notification.permission === "granted") {
+                        new Notification(title, options);
+                    } else {
+                        // अगर सिस्टम नोटिफिकेशन बंद है, तो स्क्रीन पर नार्मल Alert दिखाएं
+                        alert(`🔔 ${title}\n\n${options.body}`);
+                    }
+
+                    // 3. नए टास्क्स को knownTaskIds में डाल दें ताकि दोबारा अलार्म न बजे
+                    newTasks.forEach(t => knownTaskIds.push(t.id));
+                }
+
             } else {
                 badge.style.display = 'none';
             }
@@ -856,6 +891,12 @@
                 document.getElementById('app-title').innerText = "📱 Staff Workspace / स्टाफ पैनल";
                 document.getElementById('section-staff').classList.add('active');
                 
+                // --- नया कोड: Notification Permission मांगें ---
+                if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+                    Notification.requestPermission();
+                }
+                // ----------------------------------------------
+                
                 document.getElementById('staff-welcome').innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <div>
@@ -876,6 +917,7 @@
         function handleLogout() {
             currentUser = null;
             managerSelectedStaffId = null;
+            knownTaskIds = []; // नया कोड: पुराने टास्क्स की मेमोरी क्लियर करें
             localStorage.removeItem('rangriti_user_id'); // Remove from auto login
             
             cancelEditStaff(); 
