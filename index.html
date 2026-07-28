@@ -1,3 +1,10 @@
+मैंने आपके कोड में **'टास्क रिप्लाई (Reply) / सबमिट'** का फीचर सफलतापूर्वक जोड़ दिया है।
+
+अब स्टाफ किसी भी काम को पूरा करते समय अपनी रिपोर्ट या रिप्लाई (जैसे: "30 कलर प्रिंट हो गए हैं" या "मशीन साफ कर दी है") टाइप करके सबमिट कर सकता है। यह रिप्लाई स्टाफ को भी दिखेगा और मैनेजर के डैशबोर्ड में भी दिखाई देगा।
+
+नीचे पूरा अपडेटेड कोड दिया गया है। आप अपनी पुरानी `index.html` फाइल को इस नए कोड से रिप्लेस कर सकते हैं:
+
+```html
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -1542,6 +1549,7 @@
                                 '<span class="type-badge type-daily">Daily Duty</span>' : 
                                 '<span class="type-badge type-special">Special Task</span>';
 
+                            // --- Manager: Show Reply feature added here ---
                             tasksHTML += `
                                 <div class="task-item ${t.status} ${t.isDaily ? 'daily-routine' : ''}" style="margin-bottom: 10px; background: white;">
                                     <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -1556,6 +1564,7 @@
                                     <div class="task-meta" style="font-size: 11px; padding: 4px 8px;">
                                         <div><strong>Deadline:</strong> ${formatDateTime(t.deadline)}</div>
                                         ${isDone ? `<div><strong style="color:var(--success)">Completed At:</strong> ${formatDateTime(t.completedAt)}</div>` : ''}
+                                        ${t.replyText ? `<div style="margin-top: 6px; padding: 6px; background: #e0f2fe; border-radius: 4px; color: var(--primary-color); font-size: 12px;"><strong>💬 Staff Reply:</strong> ${t.replyText}</div>` : ''}
                                     </div>
                                 </div>
                             `;
@@ -1594,21 +1603,18 @@
 
                 let actionHTML = "";
                 if (!isDone) {
+                    // --- Staff: Reply & Submit feature added here ---
                     actionHTML = `
                         <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--border);">
-                            <label style="display:flex; align-items:center; gap:10px; color:var(--success); font-weight:bold; cursor:pointer;">
-                                <input type="checkbox" style="width:20px; height:20px;" onclick="markTaskDone('${t.id}')">
-                                <div>
-                                    <span style="display:block;">Task Completed - Tick to report</span>
-                                    <span style="display:block; font-size:12px; font-weight:normal; color:var(--text-muted);">काम पूरा हो गया - टिक करके रिपोर्ट करें</span>
-                                </div>
-                            </label>
+                            <input type="text" id="reply-${t.id}" class="form-control" placeholder="📝 काम की रिपोर्ट / रिप्लाई लिखें (Optional)" style="font-size: 13px; padding: 8px; margin-bottom: 8px;">
+                            <button class="btn btn-success" style="padding: 8px; font-size: 14px;" onclick="markTaskDone('${t.id}')">✅ Submit & Mark Done (पूरा हुआ)</button>
                         </div>
                     `;
                 } else {
                     actionHTML = `
                         <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--border); color: var(--success); font-weight:600; font-size:13px; line-height:1.4;">
                             🎉 Completed on / पूरा किया गया समय: <br>📅 ${formatDateTime(t.completedAt)}
+                            ${t.replyText ? `<div style="margin-top: 5px; color: var(--text-main); font-weight: normal; background: #f1f5f9; padding: 6px; border-radius: 4px;">💬 <b>Your Reply:</b> ${t.replyText}</div>` : ''}
                         </div>
                     `;
                 }
@@ -1634,14 +1640,19 @@
             });
         }
 
+        // --- Save Reply Text feature added here ---
         function markTaskDone(taskId) {
+            const replyInput = document.getElementById(`reply-${taskId}`);
+            const replyText = replyInput ? replyInput.value.trim() : "";
+
             setTimeout(() => {
-                if (confirm("Have you completed this task?")) {
+                if (confirm("Are you sure you want to submit this task report? (क्या आप इस काम की रिपोर्ट सबमिट करना चाहते हैं?)")) {
                     const idx = tasksDB.findIndex(t => t.id === taskId);
                     if (idx !== -1) {
                         tasksDB[idx].status = 'done';
                         tasksDB[idx].completedAt = new Date().toISOString();
                         tasksDB[idx].isRead = true; // Auto-mark read if they complete it
+                        tasksDB[idx].replyText = replyText; // Save the staff reply
                         saveTasks();
                     }
                 }
@@ -1656,3 +1667,5 @@
     </script>
 </body>
 </html>
+
+```
