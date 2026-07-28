@@ -1,3 +1,14 @@
+मैंने आपके ऐप में **'Monthly Payroll & Attendance Report' (मासिक पेरोल और हाज़िरी रिपोर्ट)** का बहुत ही उपयोगी फीचर जोड़ दिया है।
+
+अब मैनेजर "Today's Attendance" वाले टैब में जाकर किसी भी महीने (Month) को सिलेक्ट कर सकता है। ऐप ऑटोमैटिक रूप से उस महीने में स्टाफ के कुल उपस्थित दिन (Present), अनुपस्थित दिन (Absent) और कुल काम के घंटे (Total Hours) कैलकुलेट करके एक रिपोर्ट बना देगा, जिससे सैलरी/पेरोल बनाना बहुत आसान हो जाएगा।
+
+इस रिपोर्ट को आप एक क्लिक में **Excel (.xlsx)** और **PDF (.pdf)** फॉर्मेट में डाउनलोड भी कर सकते हैं।
+
+इसके लिए मैंने कोड में Excel और PDF बनाने वाली 3 सुरक्षित ओपन-सोर्स लाइब्रेरी (SheetJS और jsPDF) जोड़ी हैं।
+
+यहाँ पूरा अपडेटेड कोड दिया गया है, आप अपनी `index.html` फाइल को इससे रिप्लेस कर सकते हैं:
+
+```html
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -7,6 +18,11 @@
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <!-- Excel & PDF Export Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
     <style>
         :root {
@@ -223,7 +239,7 @@
         .type-daily { background: #e0f2fe; color: #0369a1; }
         .type-special { background: #f3e8ff; color: #6b21a8; }
         .designation-badge { background: #f1f5f9; color: var(--text-muted); border: 1px solid var(--border); }
-        .permission-badge { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+        .permission-badge { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; } 
 
         .task-meta {
             font-size: 13px; color: var(--text-muted); background: #f1f5f9;
@@ -289,7 +305,6 @@
         <h1 id="app-title">📊 Live Task Reporting App / लाइव टास्क ऐप</h1>
         <div id="live-indicator" style="font-size: 12px; margin-top: 5px; color: #86efac;">🔴 Offline (Connecting...)</div>
         
-        <!-- Header Actions: Notifications & Logout -->
         <div class="header-actions">
             <div id="notification-bell" class="bell-icon" onclick="handleBellClick()">
                 🔔
@@ -498,34 +513,7 @@
 
             <!-- Manager Attendance View -->
             <div id="manager-attendance-view" style="display: none;">
-                
-                <!-- NEW CARD: Monthly Payroll Report -->
-                <div class="card" style="border-top: 4px solid var(--success); margin-bottom: 20px;">
-                    <div class="card-title" style="flex-direction: column; align-items: flex-start;">
-                        <strong>📅 Monthly Attendance & Payroll Report</strong>
-                        <span style="font-size:13px; font-weight:normal; color:var(--text-muted);">महीने की कुल हाज़िरी और पेरोल (वेतन) रिपोर्ट</span>
-                    </div>
-                    <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
-                        <input type="month" id="payroll-month" class="form-control" style="max-width: 200px; margin-top: 0;">
-                        <button class="btn btn-success" style="width: auto; padding: 10px 20px;" onclick="generatePayroll()">📊 Generate Report / रिपोर्ट बनाएं</button>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="metrics-table">
-                            <thead>
-                                <tr>
-                                    <th>Staff Name / स्टाफ का नाम</th>
-                                    <th>Total Days Present / कुल उपस्थित दिन</th>
-                                    <th>Total Work Hours / कुल ड्यूटी घंटे</th>
-                                </tr>
-                            </thead>
-                            <tbody id="payroll-report-tbody">
-                                <tr><td colspan="3" class="empty-state">Select a month and click Generate Report. / महीना चुनें और रिपोर्ट बनाएं पर क्लिक करें।</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Daily Attendance Tracker -->
+                <!-- Today's Attendance -->
                 <div class="card">
                     <div class="card-title" style="flex-direction: column; align-items: flex-start;">
                         <strong id="manager-attendance-date-title">⏰ Today's Staff Attendance Tracker</strong>
@@ -544,6 +532,40 @@
                             </thead>
                             <tbody id="manager-attendance-tbody">
                                 </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Monthly Payroll Report Card (NEW) -->
+                <div class="card" style="border-top: 4px solid var(--secondary-color); margin-top: 20px;">
+                    <div class="card-title" style="flex-direction: column; align-items: flex-start;">
+                        <strong>📅 Monthly Payroll & Attendance Report</strong>
+                        <span style="font-size:13px; font-weight:normal; color:var(--text-muted);">महीने की हाज़िरी और पेरोल रिपोर्ट बनाएं (Excel/PDF में एक्सपोर्ट करें)</span>
+                    </div>
+                    <div style="display:flex; gap:10px; margin-bottom: 15px; align-items:flex-end; flex-wrap: wrap;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-size: 13px; font-weight: bold; color: var(--text-main);">Select Month (महीना चुनें):</label>
+                            <input type="month" id="report-month" class="form-control" style="width: auto;">
+                        </div>
+                        <button class="btn btn-success" style="width:auto; padding: 11px 20px;" onclick="generateMonthlyReport()">📊 View Report / रिपोर्ट देखें</button>
+                        <button class="btn" style="width:auto; padding: 11px 20px; background:#107c41; color:white; display:none;" id="btn-export-excel" onclick="exportReportExcel()">📥 Export to Excel</button>
+                        <button class="btn" style="width:auto; padding: 11px 20px; background:#b91c1c; color:white; display:none;" id="btn-export-pdf" onclick="exportReportPDF()">📥 Export to PDF</button>
+                    </div>
+                    
+                    <div class="table-responsive" id="monthly-report-container" style="display:none;">
+                        <table class="metrics-table" id="monthly-report-table">
+                            <thead>
+                                <tr>
+                                    <th>Staff Name & ID</th>
+                                    <th>Designation / पद</th>
+                                    <th style="text-align:center;">Total Present (उपस्थित)</th>
+                                    <th style="text-align:center;">Total Absent (अनुपस्थित)</th>
+                                    <th style="text-align:center;">Total Work Hours (कुल घंटे)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="monthly-report-tbody">
+                                <!-- Monthly Report Rows go here -->
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -626,7 +648,6 @@
                                     <div class="lang-hi">पासवर्ड सेट करें</div>
                                     <input type="text" id="stf-pass" class="form-control" placeholder="Password" required>
                                 </div>
-                                <!-- CHECKBOX FOR TASK PERMISSION -->
                                 <div class="form-group" style="display:flex; align-items:center; gap:10px; padding: 10px; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px;">
                                     <input type="checkbox" id="stf-can-assign" style="width:22px; height:22px; cursor:pointer;">
                                     <div>
@@ -666,7 +687,6 @@
                     </div>
             </div>
 
-            <!-- CARD FOR AUTHORIZED STAFF TO ASSIGN TASKS -->
             <div class="card" id="staff-assign-task-card" style="display:none; border-top: 4px solid var(--warning); background:#fffbeb;">
                 <div class="card-title" style="flex-direction: column; align-items: flex-start; color:#92400e; border-bottom-color:#fef3c7;">
                     <strong>📝 Assign Task to Others</strong>
@@ -764,6 +784,9 @@
         let isDataLoaded = false;
         let knownTaskIds = [];
 
+        // Variable for storing currently generated report data for export
+        let currentReportData = [];
+
         function saveUsers() { db.ref('users').set(usersDB); }
         function saveTasks() { db.ref('tasks').set(tasksDB); }
         function saveTemplates() { db.ref('dailyTemplates').set(dailyTemplatesDB); }
@@ -823,10 +846,138 @@
             } else {
                 renderStaffTasks();
                 renderStaffAttendanceWidget();
-                renderStaffAssignForm(); 
+                renderStaffAssignForm();
                 updateNotifications();
             }
         }
+
+        // --- Monthly Report Generation Logic ---
+        function generateMonthlyReport() {
+            const monthVal = document.getElementById('report-month').value;
+            if (!monthVal) {
+                alert("Please select a month first! (कृपया पहले रिपोर्ट के लिए महीना चुनें)");
+                return;
+            }
+
+            // Calculate total days in the selected month
+            const [year, month] = monthVal.split('-');
+            const daysInMonth = new Date(year, month, 0).getDate();
+
+            const staffMembers = usersDB.filter(u => u.role === 'staff');
+            const tbody = document.getElementById('monthly-report-tbody');
+            tbody.innerHTML = '';
+            currentReportData = []; // Clear old data
+
+            if (staffMembers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No staff found.</td></tr>';
+                return;
+            }
+
+            staffMembers.forEach(staff => {
+                // Get all attendance records for this staff in the selected YYYY-MM
+                const staffAtt = attendanceDB.filter(a => a.staffId === staff.id && a.date.startsWith(monthVal));
+                
+                const presentDays = staffAtt.length;
+                const absentDays = daysInMonth - presentDays;
+                
+                // Calculate total working hours in the month
+                let totalMins = 0;
+                staffAtt.forEach(record => {
+                    if (record.punchIn && record.punchOut) {
+                        const diffMs = new Date(record.punchOut) - new Date(record.punchIn);
+                        totalMins += Math.floor(diffMs / 60000);
+                    }
+                });
+
+                const hrs = Math.floor(totalMins / 60);
+                const mins = totalMins % 60;
+                const totalHoursStr = `${hrs} Hrs ${mins} Mins`;
+
+                // Save data for Export
+                currentReportData.push({
+                    "Staff Name": staff.name,
+                    "Designation": staff.designation || 'Staff',
+                    "Present Days": presentDays,
+                    "Absent Days": absentDays,
+                    "Total Working Hours": totalHoursStr
+                });
+
+                // Display on UI
+                tbody.innerHTML += `
+                    <tr>
+                        <td>
+                            <strong>${staff.name}</strong><br>
+                            <span style="font-size:11px;color:gray;">ID: ${staff.id}</span>
+                        </td>
+                        <td>${staff.designation || 'Staff'}</td>
+                        <td style="text-align:center; color:var(--success); font-weight:bold; font-size:16px;">${presentDays}</td>
+                        <td style="text-align:center; color:var(--danger); font-weight:bold; font-size:16px;">${absentDays}</td>
+                        <td style="text-align:center;"><b>${totalHoursStr}</b></td>
+                    </tr>
+                `;
+            });
+
+            // Show container and export buttons
+            document.getElementById('monthly-report-container').style.display = 'block';
+            document.getElementById('btn-export-excel').style.display = 'inline-block';
+            document.getElementById('btn-export-pdf').style.display = 'inline-block';
+        }
+
+        function exportReportExcel() {
+            if (currentReportData.length === 0) return;
+            const monthVal = document.getElementById('report-month').value;
+            
+            // Generate worksheet from JSON using SheetJS
+            const ws = window.XLSX.utils.json_to_sheet(currentReportData);
+            const wb = window.XLSX.utils.book_new();
+            window.XLSX.utils.book_append_sheet(wb, ws, "Monthly_Payroll");
+            
+            // Trigger download
+            window.XLSX.writeFile(wb, `Payroll_Report_${monthVal}.xlsx`);
+        }
+
+        function exportReportPDF() {
+            if (currentReportData.length === 0) return;
+            const monthVal = document.getElementById('report-month').value;
+            
+            // Initialize jsPDF
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Title
+            doc.setFontSize(16);
+            doc.text(`Monthly Payroll & Attendance Report`, 14, 15);
+            doc.setFontSize(11);
+            doc.text(`Month/Year: ${monthVal}`, 14, 22);
+            
+            // Prepare table data
+            const tableColumn = ["Staff Name", "Designation", "Present Days", "Absent Days", "Total Working Hours"];
+            const tableRows = [];
+
+            currentReportData.forEach(row => {
+                const rowData = [
+                    row["Staff Name"], 
+                    row["Designation"], 
+                    row["Present Days"], 
+                    row["Absent Days"], 
+                    row["Total Working Hours"]
+                ];
+                tableRows.push(rowData);
+            });
+
+            // AutoTable plugin generates the table
+            doc.autoTable({
+                head: [tableColumn],
+                body: tableRows,
+                startY: 30,
+                styles: { fontSize: 10 },
+                headStyles: { fillColor: [30, 58, 138] } // Match --primary-color
+            });
+
+            // Trigger download
+            doc.save(`Payroll_Report_${monthVal}.pdf`);
+        }
+        // ------------------------------------------
 
         function renderStaffAssignForm() {
             const assignCard = document.getElementById('staff-assign-task-card');
@@ -835,7 +986,6 @@
             if (currentUser.canAssignTasks) {
                 assignCard.style.display = 'block';
                 assigneeSelect.innerHTML = '<option value="" disabled selected>👉 स्टाफ चुनें (Select Staff)</option>';
-                
                 const otherStaff = usersDB.filter(u => u.role === 'staff' && u.id !== currentUser.id);
                 otherStaff.forEach(s => {
                     assigneeSelect.innerHTML += `<option value="${s.id}">${s.name} (${s.designation || 'Staff'})</option>`;
@@ -846,7 +996,6 @@
                 tomorrow.setMinutes(tomorrow.getMinutes() - tomorrow.getTimezoneOffset());
                 const sdInput = document.getElementById('stf-t-deadline');
                 if(sdInput && !sdInput.value) sdInput.value = tomorrow.toISOString().slice(0,16);
-
             } else {
                 assignCard.style.display = 'none';
             }
@@ -1054,16 +1203,13 @@
             } else if (tabName === 'attendance') {
                 document.getElementById('tab-attendance').classList.add('active');
                 document.getElementById('manager-attendance-view').style.display = 'block';
-                renderManagerAttendance();
                 
-                // Auto-set current month in Payroll input
-                const payrollInput = document.getElementById('payroll-month');
-                if(payrollInput && !payrollInput.value) {
-                    const today = new Date();
-                    const year = today.getFullYear();
-                    const month = String(today.getMonth() + 1).padStart(2, '0');
-                    payrollInput.value = `${year}-${month}`;
-                }
+                // Hide report generation view temporarily when switching back to tab
+                document.getElementById('monthly-report-container').style.display = 'none';
+                document.getElementById('btn-export-excel').style.display = 'none';
+                document.getElementById('btn-export-pdf').style.display = 'none';
+
+                renderManagerAttendance();
             } else {
                 document.getElementById('tab-staff').classList.add('active');
                 document.getElementById('manager-staff-view').style.display = 'block';
@@ -1207,71 +1353,6 @@
                     }
                 }
                 saveAttendance();
-            });
-        }
-
-        // --- NEW: Generate Monthly Payroll Report ---
-        function generatePayroll() {
-            const monthInput = document.getElementById('payroll-month').value; 
-            const tbody = document.getElementById('payroll-report-tbody');
-
-            if (!monthInput) {
-                alert("❌ Please select a month first! (कृपया पहले एक महीना चुनें!)");
-                return;
-            }
-
-            tbody.innerHTML = '';
-            const staffMembers = usersDB.filter(u => u.role === 'staff');
-
-            if (staffMembers.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="3" class="empty-state">No staff members found.</td></tr>`;
-                return;
-            }
-
-            let hasData = false;
-
-            staffMembers.forEach(staff => {
-                const monthRecords = attendanceDB.filter(a => a.staffId === staff.id && a.date.startsWith(monthInput));
-                const totalDays = monthRecords.length;
-                let totalMilliseconds = 0;
-
-                monthRecords.forEach(rec => {
-                    if (rec.punchIn && rec.punchOut) {
-                        const inTime = new Date(rec.punchIn);
-                        const outTime = new Date(rec.punchOut);
-                        totalMilliseconds += (outTime - inTime);
-                    }
-                });
-
-                const totalSecs = Math.floor(totalMilliseconds / 1000);
-                const totalMins = Math.floor(totalSecs / 60);
-                const hrs = Math.floor(totalMins / 60);
-                const mins = totalMins % 60;
-
-                if (totalDays > 0) {
-                    hasData = true;
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>
-                                <strong>👤 ${staff.name}</strong><br>
-                                <span style="font-size:11px;color:var(--primary-color); font-weight:bold;">${staff.designation || 'Staff'}</span>
-                            </td>
-                            <td><span class="status-present" style="font-size:13px;">${totalDays} Days / दिन</span></td>
-                            <td><span class="duration-display" style="background:#f1f5f9; border:1px solid #cbd5e1; color:#334155;">${hrs} hr ${mins} min</span></td>
-                        </tr>
-                    `;
-                } else {
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>
-                                <strong>👤 ${staff.name}</strong><br>
-                                <span style="font-size:11px;color:var(--text-muted);">${staff.designation || 'Staff'}</span>
-                            </td>
-                            <td><span class="status-absent">0 Days (Absent)</span></td>
-                            <td><span style="color:var(--text-muted)">0 hr 0 min</span></td>
-                        </tr>
-                    `;
-                }
             });
         }
 
@@ -1761,3 +1842,5 @@
     </script>
 </body>
 </html>
+
+```
