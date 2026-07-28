@@ -1134,7 +1134,7 @@
                 updateActiveUI();
             } else {
                 document.getElementById('notification-bell').style.display = 'block';
-                document.getElementById('app-title').innerText = "📱 Staff Workspace / स्टाफ पैनल";
+                document.getElementById('app-title').innerText = "Staff Workspace";
                 document.getElementById('section-staff').classList.add('active');
                 
                 if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
@@ -1169,7 +1169,7 @@
             document.getElementById('notification-bell').style.display = 'none';
             document.getElementById('section-manager').classList.remove('active');
             document.getElementById('section-staff').classList.remove('active');
-            document.getElementById('app-title').innerText = "📊 Task Reporting App / टास्क रिपोर्टिंग ऐप";
+            document.getElementById('app-title').innerText = "RANGRITI";
             document.getElementById('section-login').classList.add('active');
         }
 
