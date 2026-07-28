@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RANGRITI</title>
+    <title>RANGRITI App</title>
     
+    <!-- Firebase Libraries -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script> <!-- New FCM Library -->
 
     <!-- Excel & PDF Export Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -57,7 +59,7 @@
             background-position: center;
             background-size: cover;
             z-index: -1;
-            display: block; /* Hidden via JS after login */
+            display: block; 
         }
 
         .glass-wrapper {
@@ -164,7 +166,7 @@
             text-align: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             position: relative;
-            display: none; /* Hidden by default, shown after login */
+            display: none; 
         }
 
         .header h1 { font-size: 20px; font-weight: 600; }
@@ -244,7 +246,6 @@
             gap: 8px;
         }
 
-        /* Form Styling (App interior) */
         .form-group { margin-bottom: 15px; }
         .form-group label {
             display: block;
@@ -299,7 +300,6 @@
         .btn-danger:hover { background-color: #b91c1c; }
         .btn:disabled { background-color: #94a3b8; cursor: wait; }
 
-        /* Manager Tabs */
         .manager-tabs { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
         .tab-btn {
             flex: 1; min-width: 130px; padding: 10px 8px; background: #e2e8f0; border: none; border-radius: 6px;
@@ -312,7 +312,6 @@
         .grid-layout { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 992px) { .grid-layout { grid-template-columns: 1.1fr 1.9fr; } }
 
-        /* Task & Staff Items */
         .task-item, .staff-item, .template-item {
             background: white; padding: 15px; border-radius: 8px; margin-bottom: 12px; border: 1px solid var(--border);
         }
@@ -355,7 +354,6 @@
         .stat-box label { display: block; font-size: 12px; font-weight: 600; }
         .stat-box span { display: block; font-size: 10px; color: var(--text-muted); }
 
-        /* Staff Table Metrics Styles */
         .table-responsive { width: 100%; overflow-x: auto; margin-top: 10px; }
         .metrics-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
         .metrics-table th, .metrics-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
@@ -421,7 +419,7 @@
     </div>
 
     <!-- MAIN APP CONTAINER -->
-    <div class="container" id="main-container" style="display: none;"> <!-- Hidden until login -->
+    <div class="container" id="main-container" style="display: none;"> 
         
         <!-- MANAGER SECTION -->
         <div id="section-manager" class="app-section">
@@ -529,7 +527,6 @@
 
             <!-- Manager Attendance View -->
             <div id="manager-attendance-view" style="display: none;">
-                <!-- Today's Attendance -->
                 <div class="card">
                     <div class="card-title" style="flex-direction: column; align-items: flex-start;">
                         <strong id="manager-attendance-date-title">⏰ Today's Staff Attendance Tracker</strong>
@@ -746,7 +743,7 @@
         <!-- Login Box -->
         <div class="wrapper glass-wrapper" id="login-form-box">
             <form onsubmit="event.preventDefault(); initiateLogin();">
-                <h2>Login</h2>
+                <h2>Login Form</h2>
                 <div class="input-field">
                     <input type="text" id="login-id" required autocomplete="username">
                     <label>Enter your Login ID</label>
@@ -762,7 +759,7 @@
                     </label>
                     <a href="#" onclick="toggleForgotPassword(true)">Forgot password?</a>
                 </div>
-                <button type="submit" id="login-btn">Log In</button>
+                <button type="submit" id="login-btn">⏳ Loading...</button>
                 <div class="register">
                     <p>Don't have an account? <a href="#" onclick="toggleRegister(true)">Register</a></p>
                 </div>
@@ -843,7 +840,36 @@
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.database();
+        const messaging = firebase.messaging(); // FCM Initialization
         // ==========================================
+
+        // --- SERVICE WORKER REGISTRATION (For Background Notifications) ---
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./firebase-messaging-sw.js')
+            .then((registration) => {
+                console.log('Service Worker Registered!', registration.scope);
+            }).catch((err) => {
+                console.log('Service Worker Registration Failed: ', err);
+            });
+        }
+
+        // --- SAVE DEVICE TOKEN LOGIC ---
+        function saveDeviceToken(user) {
+            if ("Notification" in window && "serviceWorker" in navigator) {
+                messaging.requestPermission().then(() => {
+                    return messaging.getToken(); // Retrieve FCM Token
+                }).then((token) => {
+                    console.log("Device Token saved locally");
+                    const userIndex = usersDB.findIndex(u => u.id === user.id);
+                    if(userIndex > -1) {
+                        usersDB[userIndex].fcmToken = token;
+                        saveUsers(); // Update Token in DB
+                    }
+                }).catch((err) => {
+                    console.log("Push Notification Permission denied or error:", err);
+                });
+            }
+        }
 
         setInterval(() => {
             const timeEl = document.getElementById('live-time');
@@ -919,17 +945,22 @@
             loginBtn.innerText = "Log In";
             loginBtn.disabled = false;
 
+            // Updated Logout / Refresh Logic
             const savedUserId = localStorage.getItem('rangriti_user_id');
             if (savedUserId) {
                 const foundUser = usersDB.find(u => u.id === savedUserId);
                 if (foundUser) {
                     performLogin(foundUser);
+                } else {
+                    document.getElementById('section-login').classList.add('active');
                 }
+            } else {
+                document.getElementById('section-login').classList.add('active');
             }
         }).catch(err => {
             document.getElementById('live-indicator').innerText = "🔴 Offline (Database Error)";
             document.getElementById('live-indicator').style.color = "var(--danger)";
-            alert("Database Error: Please ensure you added the correct Firebase Config inside the code!");
+            alert("Database Error: Please check internet or config.");
         });
 
         function updateActiveUI() {
@@ -1130,7 +1161,7 @@
                 if (newTasks.length > 0) {
                     const audio = document.getElementById('notification-sound');
                     if (audio) {
-                        audio.play().catch(e => console.log("Audio blocked by browser. User needs to interact with the page first.", e));
+                        audio.play().catch(e => console.log("Audio play prevented by browser rules."));
                     }
                     const title = "नया काम मिला है! (New Task)";
                     const options = {
@@ -1208,7 +1239,6 @@
                 return;
             }
             
-            // Check remember me (Optional visual only here, localstorage saves anyway in this app design)
             performLogin(foundUser);
             document.getElementById('login-id').value = '';
             document.getElementById('login-pass').value = '';
@@ -1239,9 +1269,8 @@
                 document.getElementById('app-title').innerText = "📱 Staff Workspace / स्टाफ पैनल";
                 document.getElementById('section-staff').classList.add('active');
                 
-                if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
-                    Notification.requestPermission();
-                }
+                // --- Call Function To Trigger Push Notification Permission ---
+                saveDeviceToken(foundUser);
                 
                 document.getElementById('staff-welcome').innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -1341,7 +1370,7 @@
                 return;
             }
 
-            usersDB.push({ id, pass, name, role: "staff", designation, mobile, canAssignTasks: false });
+            usersDB.push({ id, pass, name, role: "staff", designation, mobile, canAssignTasks: false, fcmToken: null });
             saveUsers();
             
             initializeDailyRoutineTasks(id, name);
@@ -1596,7 +1625,7 @@
                 if (usersDB.some(u => u.id === id)) return alert("❌ This ID already exists!");
                 if (usersDB.some(u => u.mobile === mobile)) return alert("❌ This Mobile is already registered!");
 
-                usersDB.push({ id, pass, name, role: "staff", designation, mobile, canAssignTasks: canAssign });
+                usersDB.push({ id, pass, name, role: "staff", designation, mobile, canAssignTasks: canAssign, fcmToken: null });
                 saveUsers();
                 initializeDailyRoutineTasks(id, name);
                 cancelEditStaff();
@@ -1928,12 +1957,6 @@
                 }
             }, 50);
         }
-
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        tomorrow.setMinutes(tomorrow.getMinutes() - tomorrow.getTimezoneOffset());
-        const dInput = document.getElementById('t-deadline');
-        if(dInput) dInput.value = tomorrow.toISOString().slice(0,16);
     </script>
 </body>
 </html>
