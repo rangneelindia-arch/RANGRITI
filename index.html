@@ -841,6 +841,16 @@
         }
         const db = firebase.database();
         const messaging = firebase.messaging(); // FCM Initialization
+        messaging.onMessage((payload) => {
+    console.log("Foreground Message Received:", payload);
+    
+    // ऑडियो प्ले करें
+    const audio = document.getElementById('notification-sound');
+    if (audio) audio.play().catch(e => console.log(e));
+
+    // स्क्रीन पर अलर्ट दिखाएं
+    alert(`🔔 ${payload.notification.title}\n\n${payload.notification.body}`);
+});
         // ==========================================
 
         // --- SERVICE WORKER REGISTRATION (For Background Notifications) ---
