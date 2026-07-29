@@ -862,26 +862,42 @@
         }
 
       function saveDeviceToken(user) {
-            if ("Notification" in window && "serviceWorker" in navigator) {
-                messaging.requestPermission().then(() => {
-                   
-                    return messaging.getToken({ vapidKey: "BMBXum3BZwbotpyrIJmdE4oc7Q-h7n4TR2hlrpa1MmtarAdt6ii0iDykjyGTNru-H1hm1ot9ynWBOv8he2ZJvuA" }); 
-                }).then((token) => {
-                    console.log("Device Token saved locally");
-                    alert("✅ फ़ोन का टोकन सफलतापूर्वक मिल गया है! डेटाबेस में सेव हो रहा है...");
-                    const userIndex = usersDB.findIndex(u => u.id === user.id);
-                    if(userIndex > -1) {
-                        usersDB[userIndex].fcmToken = token;
-                        saveUsers(); // Update Token in DB
-                    }
-                }).catch((err) => {
-                    console.log("Push Notification Permission denied or error:", err);
-                    alert("❌ टोकन नहीं बन पाया! कारण: " + err.message);
-                });
-            } else {
-                alert("❌ आपका ब्राउज़र नोटिफिकेशन सपोर्ट नहीं करता या Localhost/HTTPS का इस्तेमाल नहीं हो रहा है।");
+    if ("Notification" in window && "serviceWorker" in navigator) {
+        
+        // 1. सर्विस वर्कर को मैनुअली सही रास्ते से रजिस्टर करें
+        navigator.serviceWorker.register('./firebase-messaging-sw.js')
+        .then((registration) => {
+            console.log("Service Worker Registered for FCM!");
+            
+            // 2. ब्राउज़र से नोटिफिकेशन की परमिशन मांगें
+            return messaging.requestPermission().then(() => {
+                
+                // 3. getToken में अपना VAPID Key और registration दोनों डालें (इससे 404 एरर नहीं आएगा)
+                return messaging.getToken({ 
+                    vapidKey: "BMBXum3BZwbotpyrIJmdE4oc7Q-h7n4TR2hlrpa1MmtarAdt6ii0iDykjyGTNru-H1hm1ot9ynWBOv8he2ZJvuA",
+                    serviceWorkerRegistration: registration 
+                }); 
+            });
+        })
+        .then((token) => {
+            console.log("Device Token:", token);
+            alert("✅ फ़ोन का टोकन सफलतापूर्वक मिल गया है! डेटाबेस में सेव हो रहा है...");
+            
+            const userIndex = usersDB.findIndex(u => u.id === user.id);
+            if(userIndex > -1) {
+                usersDB[userIndex].fcmToken = token;
+                saveUsers(); // Firebase में अपडेट करें
             }
-        }
+        })
+        .catch((err) => {
+            console.log("Error:", err);
+            alert("❌ टोकन नहीं बन पाया! कारण: " + err.message);
+        });
+        
+    } else {
+        alert("❌ आपका ब्राउज़र नोटिफिकेशन सपोर्ट नहीं करता।");
+    }
+}
 
         setInterval(() => {
             const timeEl = document.getElementById('live-time');
