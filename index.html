@@ -857,7 +857,7 @@
         function saveDeviceToken(user) {
             if ("Notification" in window && "serviceWorker" in navigator) {
                 messaging.requestPermission().then(() => {
-                    return messaging.getToken(); // Retrieve FCM Token
+                    return messaging.getToken(BMBXum3BZwbotpyrIJmdE4oc7Q-h7n4TR2hlrpa1MmtarAdt6ii0iDykjyGTNru-H1hm1ot9ynWBOv8he2ZJvuA); // Retrieve FCM Token
                 }).then((token) => {
                     console.log("Device Token saved locally");
                     const userIndex = usersDB.findIndex(u => u.id === user.id);
