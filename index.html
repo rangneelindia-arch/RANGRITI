@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -250,13 +250,10 @@
         .form-group label {
             display: block;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
             margin-bottom: 4px;
-            color: var(--text-main);
+            color: var(--primary-color);
         }
-        
-        .form-group .lang-en { font-weight: 600; color: var(--primary-color); }
-        .form-group .lang-hi { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; }
 
         .form-control {
             width: 100%;
@@ -307,7 +304,6 @@
         }
         .tab-btn.active { background: var(--primary-color); color: white; }
         .tab-btn span { display: block; }
-        .tab-btn .t-hi { font-size: 11px; font-weight: normal; opacity: 0.9; margin-top: 3px;}
 
         .grid-layout { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 992px) { .grid-layout { grid-template-columns: 1.1fr 1.9fr; } }
@@ -329,7 +325,6 @@
 
         .badge { padding: 3px 8px; border-radius: 4px; font-weight: 600; font-size: 11px; text-align: center; }
         .badge span { display: block; }
-        .badge .b-hi { font-size: 9px; font-weight: normal; }
         
         .badge-pending { background: #fef9c3; color: #713f12; }
         .badge-done { background: #dcfce7; color: #14532d; }
@@ -352,7 +347,7 @@
         .stat-box { text-align: center; padding: 10px; border-radius: 8px; background: #f1f5f9; }
         .stat-num { font-size: 18px; font-weight: 700; }
         .stat-box label { display: block; font-size: 12px; font-weight: 600; }
-        .stat-box span { display: block; font-size: 10px; color: var(--text-muted); }
+        .stat-box span { display: block; font-size: 10px; color: var(--text-muted); display: none; } /* Hidden span */
 
         .table-responsive { width: 100%; overflow-x: auto; margin-top: 10px; }
         .metrics-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
@@ -426,19 +421,15 @@
             <div class="manager-tabs">
                 <button class="tab-btn active" id="tab-tasks" onclick="switchManagerTab('tasks')">
                     <span>📋 Tasks Management</span>
-                    <span class="t-hi">काम और रिपोर्ट</span>
                 </button>
                 <button class="tab-btn" id="tab-attendance" onclick="switchManagerTab('attendance')">
                     <span>⏰ Today's Attendance</span>
-                    <span class="t-hi">आज की उपस्थिति</span>
                 </button>
                 <button class="tab-btn" id="tab-daily" onclick="switchManagerTab('daily')">
                     <span>📆 Manage Daily Routine</span>
-                    <span class="t-hi">दैनिक कार्य मैनेजमेंट</span>
                 </button>
                 <button class="tab-btn" id="tab-staff" onclick="switchManagerTab('staff')">
                     <span>👤 Staff Add/Remove</span>
-                    <span class="t-hi">स्टाफ जोड़ें/हटाएं</span>
                 </button>
             </div>
 
@@ -449,24 +440,23 @@
                         <div class="card" style="height: 100%;">
                             <div class="card-title" style="flex-direction: column; align-items: flex-start;">
                                 <strong>📝 Assign Special Task</strong>
-                                <span style="font-size:13px; font-weight:normal; color:var(--text-muted)</span>
                             </div>
                             <form onsubmit="event.preventDefault(); handleAddTask();">
                                 <div class="form-group">
-                                    <label class="lang-en">Task Title</label>
+                                    <label>Task Title</label>
                                     <input type="text" id="t-title" class="form-control" placeholder="e.g., Viscose Fabric Special Printing" required>
                                 </div>
                                 <div class="form-group">
-                                    <label class="lang-en">Task Description / Instructions</label>
+                                    <label>Task Description / Instructions</label>
                                     <textarea id="t-desc" class="form-control" rows="3" placeholder="e.g., Target 30 customized color options..." required></textarea>
                                 </div>
                                 <div class="form-group">
-                                    <label class="lang-en">Assign To (Select Staff)</label>
+                                    <label>Assign To (Select Staff)</label>
                                     <select id="t-assignee" class="form-control">
                                         </select>
                                 </div>
                                 <div class="form-group">
-                                    <label class="lang-en">Deadline (Date & Time)</label>
+                                    <label>Deadline (Date & Time)</label>
                                     <input type="datetime-local" id="t-deadline" class="form-control" required>
                                 </div>
                                 <button type="submit" class="btn">🚀 Assign Task</button>
@@ -478,7 +468,7 @@
                         <div class="card" style="height: 100%;">
                             <div class="card-title" style="flex-direction: column; align-items: flex-start;">
                                 <strong>📈 Company Progress Overview</strong>
-                               </div>
+                            </div>
                             <div class="stats-container" style="display: grid; grid-template-columns: 1fr; gap: 15px;">
                                 <div class="stat-box" style="border-left:5px solid var(--primary-color);"> 
                                     <div class="stat-num" id="s-total">0</div> 
@@ -506,7 +496,7 @@
                         <table class="metrics-table">
                             <thead>
                                 <tr>
-                                    <th>Staff Info / स्टाफ की जानकारी (Click to expand)</th>
+                                    <th>Staff Info (Click to expand)</th>
                                     <th>Login ID</th>
                                     <th style="text-align: center;">Total</th>
                                     <th style="text-align: center;">Pending</th>
@@ -532,8 +522,8 @@
                                 <tr>
                                     <th>Staff Name & Designation</th>
                                     <th>Status</th>
-                                    <th>Punch In</th>
-                                    <th>Punch Out</th>
+                                    <th>Punch In Time & Location</th>
+                                    <th>Punch Out Time & Location</th>
                                     <th>Total Work Hours</th>
                                 </tr>
                             </thead>
@@ -563,7 +553,7 @@
                             <thead>
                                 <tr>
                                     <th>Staff Name & ID</th>
-                                    <th>Designation / पद</th>
+                                    <th>Designation</th>
                                     <th style="text-align:center;">Total Present</th>
                                     <th style="text-align:center;">Total Absent</th>
                                     <th style="text-align:center;">Total Work Hours</th>
@@ -586,15 +576,15 @@
                             </div>
                             <form onsubmit="event.preventDefault(); handleCreateDailyTemplate();">
                                 <div class="form-group">
-                                    <label class="lang-en">Daily Task Title</label>
-                                   <input type="text" id="dl-title" class="form-control" placeholder="e.g., Machine Cleaning & Oil Check" required>
+                                    <label>Daily Task Title</label>
+                                    <input type="text" id="dl-title" class="form-control" placeholder="e.g., Machine Cleaning & Oil Check" required>
                                 </div>
                                 <div class="form-group">
-                                    <label class="lang-en">Daily Task Description</label>
+                                    <label>Daily Task Description</label>
                                     <textarea id="dl-desc" class="form-control" rows="3" placeholder="e.g., Clean machine beds and check lubricant levels..." required></textarea>
                                 </div>
                                 <div class="form-group">
-                                    <label class="lang-en">Assign Daily To (Select Target Staff)</label>
+                                    <label>Assign Daily To (Select Target Staff)</label>
                                     <select id="dl-assignee" class="form-control">
                                         </select>
                                 </div>
@@ -620,39 +610,39 @@
                         <div class="card">
                             <div class="card-title" style="flex-direction: column; align-items: flex-start;">
                                 <strong id="staff-form-title">➕ Add/Edit Staff Account</strong>
-                                <span style="font-size:13px; font-weight:normal; color:var(--text-muted);" id="staff-form-subtitle">स्टाफ अकाउंट जोड़ें या बदलें</span>
+                                <span style="font-size:13px; font-weight:normal; color:var(--text-muted);" id="staff-form-subtitle">Add or update staff account</span>
                             </div>
                             <form onsubmit="event.preventDefault(); handleSaveStaff();">
                                 <div class="form-group">
-                                    <label class="lang-en">Staff Full Name</label>
+                                    <label>Staff Full Name</label>
                                     <input type="text" id="stf-name" class="form-control" placeholder="Employee Name" required>
                                 </div>
                                 <div class="form-group">
-                                    <label class="lang-en">Staff Designation</label>
+                                    <label>Staff Designation</label>
                                     <input type="text" id="stf-designation" class="form-control" placeholder="e.g., Printing Operator, Floor Manager" required>
                                 </div>
                                 <div class="form-group">
-                                    <label class="lang-en">Mobile Number</label>
+                                    <label>Mobile Number</label>
                                     <input type="tel" id="stf-mobile" class="form-control" placeholder="10-digit mobile" pattern="[0-9]{10}" required>
                                 </div>
                                 <div class="form-group">
-                                    <label class="lang-en">Unique Login ID</label>
+                                    <label>Unique Login ID</label>
                                     <input type="text" id="stf-id" class="form-control" placeholder="Employee id" required>
                                 </div>
                                 <div class="form-group">
-                                    <label class="lang-en">Set Password</label>
+                                    <label>Set Password</label>
                                     <input type="text" id="stf-pass" class="form-control" placeholder="Password" required>
                                 </div>
                                 <div class="form-group" style="display:flex; align-items:center; gap:10px; padding: 10px; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px;">
                                     <input type="checkbox" id="stf-can-assign" style="width:22px; height:22px; cursor:pointer;">
                                     <div>
-                                        <label class="lang-en" style="margin-bottom:0; cursor:pointer; color:#92400e;" for="stf-can-assign">Give Task Assignment Permission</label>
+                                        <label style="margin-bottom:0; cursor:pointer; color:#92400e;" for="stf-can-assign">Give Task Assignment Permission</label>
                                     </div>
                                 </div>
                                 
                                 <div style="display:flex; gap:10px;">
-                                    <button type="submit" id="staff-submit-btn" class="btn btn-success">🔑 Save Account / सेव करें</button>
-                                    <button type="button" id="staff-cancel-btn" class="btn btn-danger" style="display:none;" onclick="cancelEditStaff()">❌ Cancel / रद्द करें</button>
+                                    <button type="submit" id="staff-submit-btn" class="btn btn-success">🔑 Save Account</button>
+                                    <button type="button" id="staff-cancel-btn" class="btn btn-danger" style="display:none;" onclick="cancelEditStaff()">❌ Cancel</button>
                                 </div>
                             </form>
                         </div>
@@ -661,7 +651,6 @@
                         <div class="card">
                             <div class="card-title" style="flex-direction: column; align-items: flex-start;">
                                 <strong>👤 Existing Staff List (Edit & Remove)</strong>
-                                <span style="font-size:13px; font-weight:normal; color:var(--text-muted);">म</span>
                             </div>
                             <div id="manager-staff-list"></div>
                         </div>
@@ -688,7 +677,7 @@
                 <form onsubmit="event.preventDefault(); handleStaffDelegatingTask();">
                     <div class="grid-layout" style="grid-template-columns: 1fr 1fr; gap:10px;">
                         <div class="form-group">
-                            <input type="text" id="stf-t-title" class="form-control" placeholder="काम का नाम (Task Title)" required>
+                            <input type="text" id="stf-t-title" class="form-control" placeholder="Task Title" required>
                         </div>
                         <div class="form-group">
                             <select id="stf-t-assignee" class="form-control" required>
@@ -697,20 +686,19 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <textarea id="stf-t-desc" class="form-control" rows="2" placeholder="काम का विवरण (Description)" required></textarea>
+                        <textarea id="stf-t-desc" class="form-control" rows="2" placeholder="Task Description" required></textarea>
                     </div>
                     <div class="form-group">
-                        <label style="font-size:12px; color:#92400e;">Deadline (आखरी तारीख और समय)</label>
+                        <label style="font-size:12px; color:#92400e;">Deadline</label>
                         <input type="datetime-local" id="stf-t-deadline" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn btn-warning" style="color:white; font-weight:bold;">🚀 Assign Task / काम सौंपें</button>
+                    <button type="submit" class="btn btn-warning" style="color:white; font-weight:bold;">🚀 Assign Task</button>
                 </form>
             </div>
 
             <div class="card">
                 <div class="card-title" style="flex-direction: column; align-items: flex-start;">
                     <strong>📋 Today's Mandatory Tasks & Assigned Duties</strong>
-                    <span style="font-size:13px; font-weight:normal; color:var(--text-muted);">आपके आज के अनिवार्य कार्य और सौंपी गई ड्यूटी</span>
                 </div>
                 <div id="staff-task-list"></div>
             </div>
@@ -845,15 +833,12 @@
       function saveDeviceToken(user) {
     if ("Notification" in window && "serviceWorker" in navigator) {
         
-        // 1. सर्विस वर्कर को मैनुअली सही रास्ते से रजिस्टर करें
         navigator.serviceWorker.register('./firebase-messaging-sw.js')
         .then((registration) => {
             console.log("Service Worker Registered for FCM!");
             
-            // 2. ब्राउज़र से नोटिफिकेशन की परमिशन मांगें
             return messaging.requestPermission().then(() => {
                 
-                // 3. getToken में अपना VAPID Key और registration दोनों डालें (इससे 404 एरर नहीं आएगा)
                 return messaging.getToken({ 
                     vapidKey: "BMBXum3BZwbotpyrIJmdE4oc7Q-h7n4TR2hlrpa1MmtarAdt6ii0iDykjyGTNru-H1hm1ot9ynWBOv8he2ZJvuA",
                     serviceWorkerRegistration: registration 
@@ -866,16 +851,16 @@
             const userIndex = usersDB.findIndex(u => u.id === user.id);
             if(userIndex > -1) {
                 usersDB[userIndex].fcmToken = token;
-                saveUsers(); // Firebase में अपडेट करें
+                saveUsers(); 
             }
         })
         .catch((err) => {
             console.log("Error:", err);
-            alert("❌ टोकन नहीं बन पाया! कारण: " + err.message);
+            alert("❌ Token creation failed! Reason: " + err.message);
         });
         
     } else {
-        alert("❌ आपका ब्राउज़र नोटिफिकेशन सपोर्ट नहीं करता।");
+        alert("❌ Your browser does not support notifications.");
     }
 }
 
@@ -888,16 +873,12 @@
         // ✨ NEW GEOFENCING CODE START
         // ==========================================
         
-        // 1. आपके ऑफिस का सही Latitude और Longitude
         const OFFICE_LAT = 21.218714338089512;
         const OFFICE_LNG = 72.81695747363297;
-
-        // 2. कितने मीटर के दायरे में अटेंडेंस लगनी चाहिए (जैसे 50 मीटर)
         const ALLOWED_RADIUS = 50; 
 
-        // दो लोकेशन के बीच की दूरी (मीटर में) निकालने का फंक्शन (Haversine formula)
         function getDistanceInMeters(lat1, lon1, lat2, lon2) {
-            const R = 6371e3; // पृथ्वी का रेडियस (मीटर में)
+            const R = 6371e3; 
             const dLat = (lat2 - lat1) * Math.PI / 180;
             const dLon = (lon2 - lon1) * Math.PI / 180;
             const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
@@ -906,7 +887,6 @@
             return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         }
 
-        // नया Geofence वाला लोकेशन फंक्शन
         function captureGeoLocation(callback) {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
@@ -914,28 +894,25 @@
                         const userLat = position.coords.latitude;
                         const userLng = position.coords.longitude;
                         
-                        // ऑफिस और यूज़र की दूरी कैलकुलेट करें
                         const distance = getDistanceInMeters(OFFICE_LAT, OFFICE_LNG, userLat, userLng);
                         
                         if (distance <= ALLOWED_RADIUS) {
-                            // अगर यूज़र दायरे के अंदर है, तो लोकेशन पास करें
                             const coordStr = `${userLat.toFixed(5)},${userLng.toFixed(5)}`;
                             callback(coordStr);
                         } else {
-                            // अगर यूज़र दायरे से बाहर है
-                            alert(`❌ आप नियत लोकेशन (ऑफिस) से बाहर हैं!\nआपकी दूरी: लगभग ${Math.round(distance)} मीटर।\nकृपया ऑफिस पहुँच कर अटेंडेंस लगाएँ।`);
-                            renderStaffAttendanceWidget(); // UI को वापस रिसेट करने के लिए
+                            alert(`❌ You are outside the designated location (Office)!\nYour distance: approx ${Math.round(distance)} meters.\nPlease reach the office to punch in/out.`);
+                            renderStaffAttendanceWidget(); 
                         }
                     },
                     (error) => {
                         console.warn("Location error:", error);
-                        alert("❌ Location Error: कृपया अपने फोन का GPS / Location चालू करें और ब्राउज़र को परमिशन दें।");
-                        renderStaffAttendanceWidget(); // UI को वापस रिसेट करने के लिए
+                        alert("❌ Location Error: Please turn on your phone's GPS / Location and grant permission to the browser.");
+                        renderStaffAttendanceWidget(); 
                     },
                     { enableHighAccuracy: true, timeout: 10000 }
                 );
             } else {
-                alert("❌ आपका ब्राउज़र Location सपोर्ट नहीं करता।");
+                alert("❌ Your browser does not support Location.");
                 renderStaffAttendanceWidget();
             }
         }
@@ -945,7 +922,7 @@
 
         const initialDailyTemplates = [];
         const defaultUsers = [
-            { id: "manager", pass: "123", name: "Manager / प्रबंधक", role: "manager", designation: "General Manager", mobile: "9999999999" }
+            { id: "manager", pass: "123", name: "Manager", role: "manager", designation: "General Manager", mobile: "9999999999" }
         ];
 
         let usersDB = [];
@@ -994,7 +971,6 @@
             loginBtn.innerText = "Log In";
             loginBtn.disabled = false;
 
-            // Updated Logout / Refresh Logic
             const savedUserId = localStorage.getItem('rangriti_user_id');
             if (savedUserId) {
                 const foundUser = usersDB.find(u => u.id === savedUserId);
@@ -1033,7 +1009,7 @@
         function generateMonthlyReport() {
             const monthVal = document.getElementById('report-month').value;
             if (!monthVal) {
-                alert("Please select a month first! (कृपया पहले रिपोर्ट के लिए महीना चुनें)");
+                alert("Please select a month first!");
                 return;
             }
 
@@ -1149,7 +1125,7 @@
             
             if (currentUser.canAssignTasks) {
                 assignCard.style.display = 'block';
-                assigneeSelect.innerHTML = '<option value="" disabled selected>👉 स्टाफ चुनें (Select Staff)</option>';
+                assigneeSelect.innerHTML = '<option value="" disabled selected>👉 Select Staff</option>';
                 const otherStaff = usersDB.filter(u => u.role === 'staff' && u.id !== currentUser.id);
                 otherStaff.forEach(s => {
                     assigneeSelect.innerHTML += `<option value="${s.id}">${s.name} (${s.designation || 'Staff'})</option>`;
@@ -1212,9 +1188,9 @@
                     if (audio) {
                         audio.play().catch(e => console.log("Audio play prevented by browser rules."));
                     }
-                    const title = "नया काम मिला है! (New Task)";
+                    const title = "New Task!";
                     const options = {
-                        body: `आपको ${newTasks.length} नया काम सौंपा गया है। कृपया ऐप चेक करें!`,
+                        body: `You have been assigned ${newTasks.length} new task(s). Please check the app!`,
                         icon: "https://cdn-icons-png.flaticon.com/512/1827/1827370.png", 
                         vibrate: [200, 100, 200]
                     };
@@ -1233,7 +1209,7 @@
         function handleBellClick() {
             const unreadTasks = tasksDB.filter(t => t.assigneeId === currentUser.id && t.status === 'pending' && !t.isRead);
             if (unreadTasks.length > 0) {
-                alert(`🔔 You have ${unreadTasks.length} new assigned task(s)! \n(आपके पास ${unreadTasks.length} नए कार्य हैं!)`);
+                alert(`🔔 You have ${unreadTasks.length} new assigned task(s)!`);
                 let needsSave = false;
                 tasksDB.forEach(t => {
                     if (t.assigneeId === currentUser.id && t.status === 'pending' && !t.isRead) {
@@ -1246,7 +1222,7 @@
                     updateActiveUI();
                 }
             } else {
-                alert("✅ No new notifications. (कोई नया नोटिफिकेशन नहीं है।)");
+                alert("✅ No new notifications.");
             }
         }
 
@@ -1284,7 +1260,7 @@
             const foundUser = usersDB.find(u => u.id.toLowerCase() === idInput.toLowerCase() && u.pass === passInput);
 
             if (!foundUser) {
-                alert("❌ Invalid Login ID or Password! / गलत लॉगिन आईडी या पासवर्ड!");
+                alert("❌ Invalid Login ID or Password!");
                 return;
             }
             
@@ -1300,14 +1276,13 @@
             document.getElementById('logout-btn').style.display = 'block';
             document.getElementById('section-login').classList.remove('active');
             
-            // UI Toggle: Hide Glassmorphism BG, show App Header and Container
             document.getElementById('login-fullscreen-bg').style.display = 'none';
             document.getElementById('app-header').style.display = 'block';
             document.getElementById('main-container').style.display = 'block';
 
             if (foundUser.role === 'manager') {
                 document.getElementById('notification-bell').style.display = 'none';
-                document.getElementById('app-title').innerText = "👨‍💼 Manager Dashboard / प्रबंधक पैनल";
+                document.getElementById('app-title').innerText = "👨‍💼 Manager Dashboard";
                 document.getElementById('section-manager').classList.add('active');
                 
                 const allStaff = usersDB.filter(u => u.role === 'staff');
@@ -1315,16 +1290,15 @@
                 updateActiveUI();
             } else {
                 document.getElementById('notification-bell').style.display = 'block';
-                document.getElementById('app-title').innerText = "📱 Staff Workspace / स्टाफ पैनल";
+                document.getElementById('app-title').innerText = "📱 Staff Workspace";
                 document.getElementById('section-staff').classList.add('active');
                 
-                // --- Call Function To Trigger Push Notification Permission ---
                 saveDeviceToken(foundUser);
                 
                 document.getElementById('staff-welcome').innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <div>
-                            <strong>Welcome / स्वागत है:</strong> ${foundUser.name} <br>
+                            <strong>Welcome:</strong> ${foundUser.name} <br>
                             <span style="font-size:13px; color:var(--text-muted)">ID: ${foundUser.id}</span>
                         </div>
                         <div class="type-badge designation-badge" style="font-size:12px; padding:4px 8px;">
@@ -1350,7 +1324,6 @@
             document.getElementById('section-manager').classList.remove('active');
             document.getElementById('section-staff').classList.remove('active');
             
-            // UI Toggle: Show Glassmorphism BG, hide App Header and Container
             document.getElementById('login-fullscreen-bg').style.display = 'block';
             document.getElementById('app-header').style.display = 'none';
             document.getElementById('main-container').style.display = 'none';
@@ -1473,16 +1446,16 @@
             
             const todayRecord = attendanceDB.find(a => a.staffId === currentUser.id && a.date === todayStr);
             if (!todayRecord) {
-                actionArea.innerHTML = `<button class="btn btn-success" onclick="markStaffAttendance('in')">🟢 Punch In (इन करें)</button>`;
+                actionArea.innerHTML = `<button class="btn btn-success" onclick="markStaffAttendance('in')">🟢 Punch In</button>`;
             } else if (todayRecord && !todayRecord.punchOut) {
                 actionArea.innerHTML = `
                     <div style="margin-bottom: 12px; font-weight:bold; color:var(--success);">✅ Punched In: ${formatDateTime(todayRecord.punchIn).split(' ')[1]}</div>
-                    <button class="btn btn-warning" onclick="markStaffAttendance('out')">🔴 Punch Out (आउट करें)</button>
+                    <button class="btn btn-warning" onclick="markStaffAttendance('out')">🔴 Punch Out</button>
                 `;
             } else {
                 actionArea.innerHTML = `
                     <div style="font-weight:bold; color:var(--success); border:1px solid var(--success); padding:12px; border-radius:8px; background:white; line-height:1.5;">
-                        🎉 Attendance Recorded / हाज़िरी दर्ज हो चुकी है!<br>
+                        🎉 Attendance Recorded!<br>
                         <div style="margin: 8px 0;" class="duration-display">⏱ Total Time: ${todayRecord.totalTime || '-'}</div>
                         <div style="font-size:12px; color:var(--text-muted); font-weight:normal;">
                             In: ${formatDateTime(todayRecord.punchIn).split(' ')[1]} | Out: ${formatDateTime(todayRecord.punchOut).split(' ')[1]}
@@ -1494,7 +1467,7 @@
 
         function markStaffAttendance(type) {
             const actionArea = document.getElementById('attendance-action-area');
-            actionArea.innerHTML = `<p style="color:var(--primary-color); font-weight:bold; animation: pulse 1s infinite;">📍 Fetching Live GPS Location / लाइव लोकेशन खोजी जा रही है...</p>`;
+            actionArea.innerHTML = `<p style="color:var(--primary-color); font-weight:bold; animation: pulse 1s infinite;">📍 Fetching Live GPS Location...</p>`;
             
             captureGeoLocation((gpsCoords) => {
                 const todayStr = new Date().toISOString().slice(0, 10);
@@ -1522,7 +1495,7 @@
                         const totalMins = Math.floor(totalSecs / 60);
                         const hrs = Math.floor(totalMins / 60);
                         const mins = totalMins % 60;
-                        rec.totalTime = `${hrs} hr ${mins} min / ${hrs} घंटे ${mins} मिनट`;
+                        rec.totalTime = `${hrs} hr ${mins} min`;
                     }
                 }
                 saveAttendance();
@@ -1535,7 +1508,7 @@
             const todayDateObj = new Date();
             const todayStr = todayDateObj.toISOString().slice(0, 10);
             
-            if(titleDate) titleDate.innerText = `⏰ Staff Attendance Tracker: ${todayDateObj.toLocaleDateString('hi-IN')}`;
+            if(titleDate) titleDate.innerText = `⏰ Staff Attendance Tracker: ${todayDateObj.toLocaleDateString()}`;
             if(!tbody) return;
             tbody.innerHTML = '';
             
@@ -1696,10 +1669,10 @@
             
             editingStaffId = staffId;
             document.getElementById('staff-form-title').innerText = "✏️ Edit Staff Account";
-            document.getElementById('staff-form-subtitle').innerText = "स्टाफ की जानकारी बदलें";
+            document.getElementById('staff-form-subtitle').innerText = "Update staff details";
             
             const submitBtn = document.getElementById('staff-submit-btn');
-            submitBtn.innerHTML = '💾 Update Staff / अपडेट करें';
+            submitBtn.innerHTML = '💾 Update Staff';
             submitBtn.classList.replace('btn-success', 'btn-warning');
             
             document.getElementById('staff-cancel-btn').style.display = 'inline-block';
@@ -1719,11 +1692,11 @@
             const titleEl = document.getElementById('staff-form-title');
             if(titleEl) titleEl.innerText = "➕ Add/Edit Staff Account";
             const subTitleEl = document.getElementById('staff-form-subtitle');
-            if(subTitleEl) subTitleEl.innerText = "स्टाफ अकाउंट जोड़ें या बदलें";
+            if(subTitleEl) subTitleEl.innerText = "Add or update staff account";
             
             const submitBtn = document.getElementById('staff-submit-btn');
             if(submitBtn) {
-                submitBtn.innerHTML = '🔑 Save Account / सेव करें';
+                submitBtn.innerHTML = '🔑 Save Account';
                 submitBtn.classList.replace('btn-warning', 'btn-success');
             }
             const cancelBtn = document.getElementById('staff-cancel-btn');
@@ -1793,7 +1766,7 @@
                     <div class="staff-item" style="border-left: 4px solid var(--primary-color);">
                         <div class="task-header-flex" style="align-items: center;">
                             <div>
-                                <strong>Name / नाम:</strong> ${s.name}<br>
+                                <strong>Name:</strong> ${s.name}<br>
                                 <span class="type-badge designation-badge" style="margin-top:4px;">${s.designation || 'Staff'}</span>
                                 ${permissionBadge}<br>
                                 📱 <strong>Mobile:</strong> <code style="font-weight:bold; color:var(--text-main);">${s.mobile || 'N/A'}</code><br>
@@ -1956,14 +1929,14 @@
                 if (!isDone) {
                     actionHTML = `
                         <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--border);">
-                            <input type="text" id="reply-${t.id}" class="form-control" placeholder="📝 काम की रिपोर्ट / रिप्लाई लिखें (Optional)" style="font-size: 13px; padding: 8px; margin-bottom: 8px;">
-                            <button class="btn btn-success" style="padding: 8px; font-size: 14px;" onclick="markTaskDone('${t.id}')">✅ Submit & Mark Done (पूरा हुआ)</button>
+                            <input type="text" id="reply-${t.id}" class="form-control" placeholder="📝 Write a task report/reply (Optional)" style="font-size: 13px; padding: 8px; margin-bottom: 8px;">
+                            <button class="btn btn-success" style="padding: 8px; font-size: 14px;" onclick="markTaskDone('${t.id}')">✅ Submit & Mark Done</button>
                         </div>
                     `;
                 } else {
                     actionHTML = `
                         <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--border); color: var(--success); font-weight:600; font-size:13px; line-height:1.4;">
-                            🎉 Completed on / पूरा किया गया समय: <br>📅 ${formatDateTime(t.completedAt)}
+                            🎉 Completed on: <br>📅 ${formatDateTime(t.completedAt)}
                             ${t.replyText ? `<div style="margin-top: 5px; color: var(--text-main); font-weight: normal; background: #f1f5f9; padding: 6px; border-radius: 4px;">💬 <b>Your Reply:</b> ${t.replyText}</div>` : ''}
                         </div>
                     `;
@@ -1977,11 +1950,11 @@
                         ${typeLabel}
                         <div class="task-header-flex">
                             <strong style="font-size:16px;">${t.title} ${newBadge}</strong>
-                            <span class="badge ${isDone ? 'badge-done' : 'badge-pending'}"><span>${isDone ? 'पूरा हुआ' : 'पेंडिंग'}</span></span>
+                            <span class="badge ${isDone ? 'badge-done' : 'badge-pending'}"><span>${isDone ? 'Completed' : 'Pending'}</span></span>
                         </div>
                         <div style="font-size: 14px; margin: 4px 0;">${t.desc}</div>
                         <div class="task-meta">
-                            <div><strong>Deadline / आखरी समय:</strong> ${formatDateTime(t.deadline)}</div>
+                            <div><strong>Deadline:</strong> ${formatDateTime(t.deadline)}</div>
                         </div>
                         ${actionHTML}
                     </div>
