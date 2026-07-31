@@ -903,23 +903,64 @@
             if(timeEl) timeEl.innerText = new Date().toLocaleTimeString([], { hour12: true });
         }, 1000);
 
+        // ==========================================
+        // ✨ NEW GEOFENCING CODE START
+        // ==========================================
+        
+        // 1. आपके ऑफिस का सही Latitude और Longitude
+        const OFFICE_LAT = 21.218714338089512;
+        const OFFICE_LNG = 72.81695747363297;
+
+        // 2. कितने मीटर के दायरे में अटेंडेंस लगनी चाहिए (जैसे 50 मीटर)
+        const ALLOWED_RADIUS = 50; 
+
+        // दो लोकेशन के बीच की दूरी (मीटर में) निकालने का फंक्शन (Haversine formula)
+        function getDistanceInMeters(lat1, lon1, lat2, lon2) {
+            const R = 6371e3; // पृथ्वी का रेडियस (मीटर में)
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        }
+
+        // नया Geofence वाला लोकेशन फंक्शन
         function captureGeoLocation(callback) {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
-                        const coordStr = `${position.coords.latitude.toFixed(5)},${position.coords.longitude.toFixed(5)}`;
-                        callback(coordStr);
+                        const userLat = position.coords.latitude;
+                        const userLng = position.coords.longitude;
+                        
+                        // ऑफिस और यूज़र की दूरी कैलकुलेट करें
+                        const distance = getDistanceInMeters(OFFICE_LAT, OFFICE_LNG, userLat, userLng);
+                        
+                        if (distance <= ALLOWED_RADIUS) {
+                            // अगर यूज़र दायरे के अंदर है, तो लोकेशन पास करें
+                            const coordStr = `${userLat.toFixed(5)},${userLng.toFixed(5)}`;
+                            callback(coordStr);
+                        } else {
+                            // अगर यूज़र दायरे से बाहर है
+                            alert(`❌ आप नियत लोकेशन (ऑफिस) से बाहर हैं!\nआपकी दूरी: लगभग ${Math.round(distance)} मीटर।\nकृपया ऑफिस पहुँच कर अटेंडेंस लगाएँ।`);
+                            renderStaffAttendanceWidget(); // UI को वापस रिसेट करने के लिए
+                        }
                     },
                     (error) => {
                         console.warn("Location error:", error);
-                        callback("Location Denied / स्थान स्वीकृत नहीं");
+                        alert("❌ Location Error: कृपया अपने फोन का GPS / Location चालू करें और ब्राउज़र को परमिशन दें।");
+                        renderStaffAttendanceWidget(); // UI को वापस रिसेट करने के लिए
                     },
-                    { enableHighAccuracy: true, timeout: 6000 }
+                    { enableHighAccuracy: true, timeout: 10000 }
                 );
             } else {
-                callback("Not Supported / ब्राउज़र असमर्थ");
+                alert("❌ आपका ब्राउज़र Location सपोर्ट नहीं करता।");
+                renderStaffAttendanceWidget();
             }
         }
+        // ==========================================
+        // ✨ NEW GEOFENCING CODE END
+        // ==========================================
 
         const initialDailyTemplates = [];
         const defaultUsers = [
