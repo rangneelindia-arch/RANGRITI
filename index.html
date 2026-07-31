@@ -406,7 +406,7 @@
     <div id="login-fullscreen-bg" class="login-fullscreen-bg"></div>
 
     <div class="header" id="app-header">
-        <h1 id="app-title">📊 Live Task Reporting App / लाइव टास्क ऐप</h1>
+        <h1 id="app-title">📊 Live Task Reporting App</h1>
         <div id="live-indicator" style="font-size: 12px; margin-top: 5px; color: #86efac;">🔴 Offline (Connecting...)</div>
         
         <div class="header-actions">
@@ -414,7 +414,7 @@
                 🔔
                 <span id="notif-badge" class="notif-badge">0</span>
             </div>
-            <button class="logout-btn" id="logout-btn" onclick="handleLogout()">Logout / लॉगआउट</button>
+            <button class="logout-btn" id="logout-btn" onclick="handleLogout()">Logout</button>
         </div>
     </div>
 
@@ -449,31 +449,27 @@
                         <div class="card" style="height: 100%;">
                             <div class="card-title" style="flex-direction: column; align-items: flex-start;">
                                 <strong>📝 Assign Special Task</strong>
-                                <span style="font-size:13px; font-weight:normal; color:var(--text-muted);">नया विशेष काम सौंपें</span>
+                                <span style="font-size:13px; font-weight:normal; color:var(--text-muted)</span>
                             </div>
                             <form onsubmit="event.preventDefault(); handleAddTask();">
                                 <div class="form-group">
                                     <label class="lang-en">Task Title</label>
-                                    <div class="lang-hi">काम का नाम / टाइटल</div>
                                     <input type="text" id="t-title" class="form-control" placeholder="e.g., Viscose Fabric Special Printing" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="lang-en">Task Description / Instructions</label>
-                                    <div class="lang-hi">काम का विवरण (निर्देश)</div>
                                     <textarea id="t-desc" class="form-control" rows="3" placeholder="e.g., Target 30 customized color options..." required></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label class="lang-en">Assign To (Select Staff)</label>
-                                    <div class="lang-hi">स्टाफ सदस्य चुनें</div>
                                     <select id="t-assignee" class="form-control">
                                         </select>
                                 </div>
                                 <div class="form-group">
                                     <label class="lang-en">Deadline (Date & Time)</label>
-                                    <div class="lang-hi">आखरी तारीख और समय</div>
                                     <input type="datetime-local" id="t-deadline" class="form-control" required>
                                 </div>
-                                <button type="submit" class="btn">🚀 Assign Task / काम सौंपें</button>
+                                <button type="submit" class="btn">🚀 Assign Task</button>
                             </form>
                         </div>
                     </div>
@@ -482,20 +478,19 @@
                         <div class="card" style="height: 100%;">
                             <div class="card-title" style="flex-direction: column; align-items: flex-start;">
                                 <strong>📈 Company Progress Overview</strong>
-                                <span style="font-size:13px; font-weight:normal; color:var(--text-muted);">कंपनी के काम का लाइव स्टेटस</span>
-                            </div>
+                               </div>
                             <div class="stats-container" style="display: grid; grid-template-columns: 1fr; gap: 15px;">
                                 <div class="stat-box" style="border-left:5px solid var(--primary-color);"> 
                                     <div class="stat-num" id="s-total">0</div> 
-                                    <label>Company Total</label><span>कंपनी का कुल काम</span>
+                                    <label>Company Total</label>
                                 </div>
                                 <div class="stat-box" style="border-left:5px solid var(--warning);"> 
                                     <div class="stat-num" id="s-pending" style="color:var(--warning)">0</div> 
-                                    <label>Total Pending</label><span>कुल लंबित काम</span>
+                                    <label>Total Pending</label>
                                 </div>
                                 <div class="stat-box" style="border-left:5px solid var(--success);"> 
                                     <div class="stat-num" id="s-done" style="color:var(--success)">0</div> 
-                                    <label>Total Completed</label><span>कुल पूरे हुए काम</span>
+                                    <label>Total Completed</label>
                                 </div>
                             </div>
                         </div>
@@ -505,7 +500,7 @@
                 <div class="card" style="border-top: 4px solid var(--secondary-color); margin-top: 20px;">
                     <div class="card-title" style="flex-direction: column; align-items: flex-start;">
                         <strong>📊 Staff-wise Task Summary & Detailed Logs</strong>
-                        <span style="font-size:13px; font-weight:normal; color:var(--danger); font-weight:600;">👉 Click on any Staff Name to Expand, View & Delete their tasks! (काम देखने और हटाने के लिए नाम पर क्लिक करें)</span>
+                        <span style="font-size:13px; font-weight:normal; color:var(--danger); font-weight:600;">👉 Click on any Staff Name to Expand, View & Delete their tasks!</span>
                     </div>
                     <div class="table-responsive">
                         <table class="metrics-table">
@@ -513,9 +508,9 @@
                                 <tr>
                                     <th>Staff Info / स्टाफ की जानकारी (Click to expand)</th>
                                     <th>Login ID</th>
-                                    <th style="text-align: center;">Total / कुल</th>
-                                    <th style="text-align: center;">Pending / लंबित</th>
-                                    <th style="text-align: center;">Completed / पूरा</th>
+                                    <th style="text-align: center;">Total</th>
+                                    <th style="text-align: center;">Pending</th>
+                                    <th style="text-align: center;">Completed</th>
                                 </tr>
                             </thead>
                             <tbody id="manager-staff-metrics-tbody">
@@ -530,17 +525,16 @@
                 <div class="card">
                     <div class="card-title" style="flex-direction: column; align-items: flex-start;">
                         <strong id="manager-attendance-date-title">⏰ Today's Staff Attendance Tracker</strong>
-                        <span style="font-size:13px; font-weight:normal; color:var(--text-muted);">स्टाफ हाज़िरी सूची: इन/आउट का सटीक समय, कुल ड्यूटी घंटे और लाइव लोकेशन नक्शा यहाँ देखें</span>
                     </div>
                     <div class="table-responsive">
                         <table class="metrics-table">
                             <thead>
                                 <tr>
                                     <th>Staff Name & Designation</th>
-                                    <th>Status / स्थिति</th>
-                                    <th>Punch In / इन समय और स्थान</th>
-                                    <th>Punch Out / आउट समय और स्थान</th>
-                                    <th>Total Work Hours / कुल समय</th>
+                                    <th>Status</th>
+                                    <th>Punch In</th>
+                                    <th>Punch Out</th>
+                                    <th>Total Work Hours</th>
                                 </tr>
                             </thead>
                             <tbody id="manager-attendance-tbody">
@@ -553,14 +547,13 @@
                 <div class="card" style="border-top: 4px solid var(--secondary-color); margin-top: 20px;">
                     <div class="card-title" style="flex-direction: column; align-items: flex-start;">
                         <strong>📅 Monthly Payroll & Attendance Report</strong>
-                        <span style="font-size:13px; font-weight:normal; color:var(--text-muted);">महीने की हाज़िरी और पेरोल रिपोर्ट बनाएं (Excel/PDF में एक्सपोर्ट करें)</span>
                     </div>
                     <div style="display:flex; gap:10px; margin-bottom: 15px; align-items:flex-end; flex-wrap: wrap;">
                         <div class="form-group" style="margin-bottom: 0;">
-                            <label style="font-size: 13px; font-weight: bold; color: var(--text-main);">Select Month (महीना चुनें):</label>
+                            <label style="font-size: 13px; font-weight: bold; color: var(--text-main);">Select Month:</label>
                             <input type="month" id="report-month" class="form-control" style="width: auto;">
                         </div>
-                        <button class="btn btn-success" style="width:auto; padding: 11px 20px;" onclick="generateMonthlyReport()">📊 View Report / रिपोर्ट देखें</button>
+                        <button class="btn btn-success" style="width:auto; padding: 11px 20px;" onclick="generateMonthlyReport()">📊 View Report</button>
                         <button class="btn" style="width:auto; padding: 11px 20px; background:#107c41; color:white; display:none;" id="btn-export-excel" onclick="exportReportExcel()">📥 Export to Excel</button>
                         <button class="btn" style="width:auto; padding: 11px 20px; background:#b91c1c; color:white; display:none;" id="btn-export-pdf" onclick="exportReportPDF()">📥 Export to PDF</button>
                     </div>
@@ -571,9 +564,9 @@
                                 <tr>
                                     <th>Staff Name & ID</th>
                                     <th>Designation / पद</th>
-                                    <th style="text-align:center;">Total Present (उपस्थित)</th>
-                                    <th style="text-align:center;">Total Absent (अनुपस्थित)</th>
-                                    <th style="text-align:center;">Total Work Hours (कुल घंटे)</th>
+                                    <th style="text-align:center;">Total Present</th>
+                                    <th style="text-align:center;">Total Absent</th>
+                                    <th style="text-align:center;">Total Work Hours</th>
                                 </tr>
                             </thead>
                             <tbody id="monthly-report-tbody">
@@ -590,26 +583,22 @@
                         <div class="card">
                             <div class="card-title" style="flex-direction: column; align-items: flex-start;">
                                 <strong>📆 Create & Assign Daily Task Template</strong>
-                                <span style="font-size:13px; font-weight:normal; color:var(--text-muted);">दैनिक अनिवार्य कार्य बनाएं और सिलेक्टेड स्टाफ को असाइन करें</span>
                             </div>
                             <form onsubmit="event.preventDefault(); handleCreateDailyTemplate();">
                                 <div class="form-group">
                                     <label class="lang-en">Daily Task Title</label>
-                                    <div class="lang-hi">दैनिक कार्य का नाम / टाइटल</div>
-                                    <input type="text" id="dl-title" class="form-control" placeholder="e.g., Machine Cleaning & Oil Check" required>
+                                   <input type="text" id="dl-title" class="form-control" placeholder="e.g., Machine Cleaning & Oil Check" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="lang-en">Daily Task Description</label>
-                                    <div class="lang-hi">दैनिक कार्य का विवरण (निर्देश)</div>
                                     <textarea id="dl-desc" class="form-control" rows="3" placeholder="e.g., Clean machine beds and check lubricant levels..." required></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label class="lang-en">Assign Daily To (Select Target Staff)</label>
-                                    <div class="lang-hi">यह रोज़ाना किस स्टाफ को दिखना चाहिए? (सिलेक्टेड स्टाफ)</div>
                                     <select id="dl-assignee" class="form-control">
                                         </select>
                                 </div>
-                                <button type="submit" class="btn btn-success">🚀 Save & Assign Daily / सुरक्षित और डेली असाइन करें</button>
+                                <button type="submit" class="btn btn-success">🚀 Save & Assign Daily</button>
                             </form>
                         </div>
                     </div>
@@ -617,7 +606,6 @@
                         <div class="card">
                             <div class="card-title" style="flex-direction: column; align-items: flex-start;">
                                 <strong>📋 Active Daily Duties by Selected Staff</strong>
-                                <span style="font-size:13px; font-weight:normal; color:var(--text-muted);">सक्रिय दैनिक कार्य सूची (जो केवल चुने हुए स्टाफ को रोज सुबह दिखेगी)</span>
                             </div>
                             <div id="manager-daily-template-list"></div>
                         </div>
@@ -637,34 +625,28 @@
                             <form onsubmit="event.preventDefault(); handleSaveStaff();">
                                 <div class="form-group">
                                     <label class="lang-en">Staff Full Name</label>
-                                    <div class="lang-hi">स्टाफ का पूरा नाम</div>
                                     <input type="text" id="stf-name" class="form-control" placeholder="Employee Name" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="lang-en">Staff Designation</label>
-                                    <div class="lang-hi">स्टाफ का पद (Designation)</div>
                                     <input type="text" id="stf-designation" class="form-control" placeholder="e.g., Printing Operator, Floor Manager" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="lang-en">Mobile Number</label>
-                                    <div class="lang-hi">मोबाइल नंबर</div>
                                     <input type="tel" id="stf-mobile" class="form-control" placeholder="10-digit mobile" pattern="[0-9]{10}" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="lang-en">Unique Login ID</label>
-                                    <div class="lang-hi">लॉगिन आईडी (बिना स्पेस के)</div>
                                     <input type="text" id="stf-id" class="form-control" placeholder="Employee id" required>
                                 </div>
                                 <div class="form-group">
                                     <label class="lang-en">Set Password</label>
-                                    <div class="lang-hi">पासवर्ड सेट करें</div>
                                     <input type="text" id="stf-pass" class="form-control" placeholder="Password" required>
                                 </div>
                                 <div class="form-group" style="display:flex; align-items:center; gap:10px; padding: 10px; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px;">
                                     <input type="checkbox" id="stf-can-assign" style="width:22px; height:22px; cursor:pointer;">
                                     <div>
                                         <label class="lang-en" style="margin-bottom:0; cursor:pointer; color:#92400e;" for="stf-can-assign">Give Task Assignment Permission</label>
-                                        <div class="lang-hi" style="margin-top:2px; color:#b45309;">इस स्टाफ को दूसरों को काम सौंपने का अधिकार दें</div>
                                     </div>
                                 </div>
                                 
@@ -679,7 +661,7 @@
                         <div class="card">
                             <div class="card-title" style="flex-direction: column; align-items: flex-start;">
                                 <strong>👤 Existing Staff List (Edit & Remove)</strong>
-                                <span style="font-size:13px; font-weight:normal; color:var(--text-muted);">मौजूदा स्टाफ सूची (हटाने और प्रबंधन के लिए)</span>
+                                <span style="font-size:13px; font-weight:normal; color:var(--text-muted);">म</span>
                             </div>
                             <div id="manager-staff-list"></div>
                         </div>
@@ -690,10 +672,10 @@
 
         <!-- STAFF SECTION -->
         <div id="section-staff" class="app-section">
-            <div class="welcome-text" id="staff-welcome">Welcome, Staff Member / नमस्ते, स्टाफ सदस्य</div>
+            <div class="welcome-text" id="staff-welcome">Welcome, Staff Member</div>
             
             <div class="attendance-widget" id="staff-attendance-widget">
-                <h3>⏰ Daily Attendance Tracker / आज की हाज़िरी</h3>
+                <h3>⏰ Daily Attendance Tracker</h3>
                 <div class="time-display" id="live-time">00:00:00</div>
                 <div id="attendance-action-area" style="width: 100%; max-width: 320px; text-align: center;">
                     </div>
@@ -702,7 +684,6 @@
             <div class="card" id="staff-assign-task-card" style="display:none; border-top: 4px solid var(--warning); background:#fffbeb;">
                 <div class="card-title" style="flex-direction: column; align-items: flex-start; color:#92400e; border-bottom-color:#fef3c7;">
                     <strong>📝 Assign Task to Others</strong>
-                    <span style="font-size:13px; font-weight:normal; color:#b45309;">अन्य स्टाफ को काम सौंपें (आपको यह विशेष अधिकार दिया गया है)</span>
                 </div>
                 <form onsubmit="event.preventDefault(); handleStaffDelegatingTask();">
                     <div class="grid-layout" style="grid-template-columns: 1fr 1fr; gap:10px;">
