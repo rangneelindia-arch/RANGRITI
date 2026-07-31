@@ -881,8 +881,7 @@
         })
         .then((token) => {
             console.log("Device Token:", token);
-            alert("✅ फ़ोन का टोकन सफलतापूर्वक मिल गया है! डेटाबेस में सेव हो रहा है...");
-            
+                        
             const userIndex = usersDB.findIndex(u => u.id === user.id);
             if(userIndex > -1) {
                 usersDB[userIndex].fcmToken = token;
